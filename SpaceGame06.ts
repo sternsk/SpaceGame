@@ -1,4 +1,4 @@
-class SpaceGame061{
+class SpaceGame06{
     gameEnvironment: GameEnvironment;
     //background: GridBackground;
     
@@ -117,6 +117,6 @@ class SpaceGame061{
 
 // Initialisiere das Spiel, wenn die Seite geladen ist
 window.onload = () => {
-    const game = new SpaceGame061();
+    const game = new SpaceGame06();
     game.init(); // Aufruf der init-Methode, um das Spiel zu starten
 };
