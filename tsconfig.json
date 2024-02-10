@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "target": "es2016",
+    "module": "commonjs", 
+    "outDir": "../dist/SpaceGame06",
+    "rootDir": "./",
+    "sourceMap": true,
+    "allowJs": true,
+    "esModuleInterop": true,
+    
+    
+    "forceConsistentCasingInFileNames": true,
+    
+    "strict": true,
+    "skipLibCheck": true,
+    "lib": ["dom", "es5", "es6", "scripthost"]
+  },
+  "include": [
+    "./"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts"
+  ]
+}
