@@ -64,14 +64,18 @@ class SpaceGame061{
         }, 13000); // miliseconds
 
         /*  
-        for (i: number = 0; i<3; i++){
-            this.gameEnvironment.showMessage(i);
+            Ich begrüße Sie herzlich, Commander. Dies ist Ihre Rakete und wir sind Ihre Crew. 
+            Wir stehen Ihnen zu Diensten bei Ihrer Reise durch den Raum. 
+            An der linken Seite des Bildschirms sehen Sie einige nützliche Anzeigeelemente.
 
-        }
-            krass, die Rakete erreicht ein unglaublich großes Etwas. 
+            krass, Commander, wir erreichen ein unglaublich großes Etwas. 
             Commander, das sieht aus, wie ein scharzes Loch. 
             Commander, das schware Loch kippt um! Ich glaube, es spuckt etwas aus. Das ist ja unglaublich, es ist ein unglaublich 
-            massereiches Element. Das müssen wir einfangen und wieder zurück bringen! Vielleicht können wir ein Wurmloch erzeugen und 
+            massereiches Element. Commander, das massereiche Element ist genau auf Kollisionskurs zur Raumstation! Wir müssen die Raumstation vor SChaden bewahren!
+            Commander, jetzt erscheinen auch noch Meteoriten und rasen auf die Station zu! Wir müssen die Station und das massereiche Element mit einem Schutzschild versehen!
+            
+            Sehr gut gemacht! Die Station und das massereiche Element sind jetzt sicher. Wir können nun das massereiche Element einfangen und
+            zum schwarzen Loch zurück bringen. Vielleicht können wir ein Wurmloch erzeugen und 
             so zu der Station auf der anderen Seite der Galaxis gelangen.
             Auf gehts, Commander!
 

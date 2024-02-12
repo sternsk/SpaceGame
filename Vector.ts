@@ -5,13 +5,13 @@ class Vector {
     constructor();
     constructor(length: number, angle: number);
     constructor(point:{x:number, y:number});
+
+    //this constructor overload is not callable
     constructor(point1:{x1: number, y1: number}, point2:{x2: number, y2: number});
     constructor(...args: any[]){
       //definitely assign properties
         
-        
-
-        if (args.length === 2 && typeof args[0] === `number` && typeof args[1] === `number`){
+      if (args.length === 2 && typeof args[0] === `number` && typeof args[1] === `number`){
             let [length, angle] = args;
             this._length = length;
             if (angle >= 360 || angle < 0) {
@@ -32,6 +32,32 @@ class Vector {
           }
     }
     
+    static fromLengthAndAngle(length: number, angle: number): Vector {
+      if (angle >= 360 || angle < 0) {
+          angle = ((angle % 360) + 360) % 360;
+      }
+      return new Vector(length, angle);
+    }
+
+    static fromPoint(point: {x: number, y: number}): Vector {
+        const length = Math.sqrt(Math.pow(point.x, 2) + Math.pow(point.y, 2));
+        const angle = Math.atan2(point.y, point.x);
+        return new Vector(length, angle);
+    }
+
+    static betweenPoints(point1: {x: number, y: number}, point2: {x: number, y: number}): Vector {
+        const length = Math.sqrt(Math.pow(point2.x - point1.x, 2) + Math.pow(point2.y - point1.y, 2));
+        const angle = Math.atan2(point2.y - point1.y, point2.x - point1.x);
+        return new Vector(length, angle);
+    }
+
+    distance(v: Vector): number {
+        const p1 = this.toPoint();
+        const p2 = v.toPoint();
+        const distanceVector = Vector.betweenPoints(p1, p2);
+        return distanceVector.length;
+    }
+
     add(v: Vector): Vector {
       // Calculate the resulting vector from the addition of two vectors
       
@@ -48,6 +74,8 @@ class Vector {
       return new Vector(this._length, this._angle);
       */
     }
+
+    
 
     get angle(): number {
 

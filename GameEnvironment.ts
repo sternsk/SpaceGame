@@ -8,6 +8,7 @@ class GameEnvironment{
     private _viewBoxHeight: number;
     private defsElement: SVGDefsElement;
     private controlElements: HTMLElement[];
+    private messageBox: HTMLElement | null;
     private label1: HTMLElement;
     private label2: HTMLElement;
     private label3: HTMLElement;
@@ -21,7 +22,7 @@ class GameEnvironment{
     
 
     constructor(){
-        //initialisier UserSpace -100 - 100
+        //initialisiere UserSpace -100 - 100
         this._viewBoxLeft = -200;
         this._viewBoxTop = -200;
         this._viewBoxWidth = 600;
@@ -82,7 +83,13 @@ class GameEnvironment{
         document.getElementById('controlContainer')!.appendChild(this.label4);
         document.getElementById('controlContainer')!.appendChild(this.ArrowBox2);
 
+        //initialize messageBox
+        
+        this.messageBox = document.getElementById(`messageBox`);
+        console.log(this.messageBox)
+        
 
+        
         //zwei html-Input-Elements für linken und rechten Daumen: links Beschleunigung, rechts Rotation
         this.htmlInputElements = [];
 
@@ -135,6 +142,14 @@ class GameEnvironment{
     set svgElement(svgElem: SVGSVGElement){
         this._svgElement = svgElem;
     }
+    
+    public setArrow1(direction: number, scale: number){
+        this.arrow1.setAttribute(`transform`, `rotate (${direction}), scale (${scale/10})`)
+    }
+
+    public setArrow2(direction: number, scale: number){
+        this.arrow2.setAttribute(`transform`, `rotate (${direction}), scale (${scale})`)
+    }
 
     public setLabel1(value: string){
         this.label1.textContent = value;
@@ -152,12 +167,19 @@ class GameEnvironment{
         this.label4.textContent = value;
     }
 
-    public setArrow1(direction: number, scale: number){
-        this.arrow1.setAttribute(`transform`, `rotate (${direction}), scale (${scale/10})`)
+    setMessage(message: string){
+        
+        const messageDuration: number = 3 //seconds
+        if (this.messageBox){
+            console.log(`setMessage called`)
+            this.messageBox.setAttribute(`display`, `block`)
+            this.messageBox.innerHTML = message;
+            setTimeout(()=> {
+                if (this.messageBox)
+                this.messageBox.setAttribute(`display`, `none`)
+            }, messageDuration * 1000)
+        }
     }
-
-    public setArrow2(direction: number, scale: number){
-        this.arrow2.setAttribute(`transform`, `rotate (${direction}), scale (${scale})`)
-    }
+    
 
 }

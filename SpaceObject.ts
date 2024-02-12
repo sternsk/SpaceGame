@@ -108,6 +108,13 @@ class SpaceObject {
         
     }
 
+    distance(v: Vector): number{
+        const p1 = this.position.toPoint()
+        const p2 = v.toPoint()
+        const distanceVector = Vector.betweenPoints(p1, p2)
+        return distanceVector.length;
+    }
+
     get direction(): Vector{
         return this._direction;
     }

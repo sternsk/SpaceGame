@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "es2016",
     "module": "commonjs", 
-    "outDir": "../dist/SpaceGame06",
+    "outDir": "../dist/SpaceGame061",
     "rootDir": "./",
     "sourceMap": true,
     "allowJs": true,
