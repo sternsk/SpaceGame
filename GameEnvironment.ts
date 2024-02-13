@@ -8,7 +8,8 @@ class GameEnvironment{
     private _viewBoxHeight: number;
     private defsElement: SVGDefsElement;
     private controlElements: HTMLElement[];
-    private messageBox: HTMLElement | null;
+    private textBox: HTMLElement | null;
+    
     private label1: HTMLElement;
     private label2: HTMLElement;
     private label3: HTMLElement;
@@ -22,7 +23,7 @@ class GameEnvironment{
     
 
     constructor(){
-        //initialisiere UserSpace -100 - 100
+        //initialisiere UserSpace
         this._viewBoxLeft = -200;
         this._viewBoxTop = -200;
         this._viewBoxWidth = 600;
@@ -83,10 +84,8 @@ class GameEnvironment{
         document.getElementById('controlContainer')!.appendChild(this.label4);
         document.getElementById('controlContainer')!.appendChild(this.ArrowBox2);
 
-        //initialize messageBox
-        
-        this.messageBox = document.getElementById(`messageBox`);
-        console.log(this.messageBox)
+        this.textBox = document.getElementById(`textBox`)!;
+        this.textBox.style.display = `none`;
         
 
         
@@ -127,8 +126,18 @@ class GameEnvironment{
         return this._viewBoxLeft;
     }
 
+    set viewBoxLeft(n:number){
+        this._viewBoxLeft = n;
+        this._svgElement.setAttribute("viewBox", `${this._viewBoxLeft} ${this._viewBoxTop} ${this._viewBoxWidth} ${this._viewBoxHeight}`);
+    }
+
     get viewBoxTop(){
         return this._viewBoxTop;
+    }
+
+    set viewBoxTop(n:number){
+        this._viewBoxTop = n;
+        this._svgElement.setAttribute("viewBox", `${this._viewBoxLeft} ${this._viewBoxTop} ${this._viewBoxWidth} ${this._viewBoxHeight}`);
     }
 
     get viewBoxWidth(){
@@ -168,17 +177,24 @@ class GameEnvironment{
     }
 
     setMessage(message: string){
-        
-        const messageDuration: number = 3 //seconds
-        if (this.messageBox){
-            console.log(`setMessage called`)
-            this.messageBox.setAttribute(`display`, `block`)
-            this.messageBox.innerHTML = message;
-            setTimeout(()=> {
-                if (this.messageBox)
-                this.messageBox.setAttribute(`display`, `none`)
-            }, messageDuration * 1000)
+        //const textBox = document.getElementById(`textBox`)! //textBox as local variable
+        const messageDuration: number = 20 //seconds
+        if(this.textBox)   { 
+            console.log(this.textBox)
+            this.textBox.innerHTML = message
+            this.textBox.style.display = `block`;
+            console.log("display set to block")
         }
+
+        setTimeout(()=>{
+            if(this.textBox){
+                this.textBox.style.display = `one`;
+                console.log("display set to none")
+            }
+        }, messageDuration* 1000)
+        
+        console.log(`message set`)
+        
     }
     
 
