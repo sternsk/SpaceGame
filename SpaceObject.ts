@@ -142,6 +142,10 @@ class SpaceObject {
         return this._rotation;
     }
 
+    get scale(): number{
+        return this._scale;
+    }
+
     // Getter-Methode, um die SVG-Elemente zu erhalten
     get svgElem(): SVGGElement | null {
         if (this.gElement){
@@ -219,7 +223,7 @@ class SpaceObject {
         this._position= p;
     }
 
-    public scale(s: number){
+    setScale(s: number){
         this._scale= s;
     }
 

@@ -179,21 +179,23 @@ class GameEnvironment{
     setMessage(message: string){
         //const textBox = document.getElementById(`textBox`)! //textBox as local variable
         const messageDuration: number = 20 //seconds
-        if(this.textBox)   { 
-            console.log(this.textBox)
-            this.textBox.innerHTML = message
-            this.textBox.style.display = `block`;
-            console.log("display set to block")
-        }
+        let messageShowing;
+        if(!messageShowing){
+            if(this.textBox)   { 
+                this.textBox.innerHTML = message
+                this.textBox.style.display = `block`;
+                messageShowing = true;
+                }
 
-        setTimeout(()=>{
-            if(this.textBox){
-                this.textBox.style.display = `one`;
-                console.log("display set to none")
-            }
-        }, messageDuration* 1000)
+            setTimeout(()=>{
+                if(this.textBox){
+                    this.textBox.style.display = `none`;
+                    messageShowing = false;
+                    
+                }
+            }, messageDuration* 1000)
+        }
         
-        console.log(`message set`)
         
     }
     

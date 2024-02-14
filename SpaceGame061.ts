@@ -33,7 +33,7 @@ class SpaceGame061{
         )
         //this.godPlanet.setImageWidth(300); // is undefined by default
         this.dogPlanet.mass = 20;
-        this.dogPlanet.scale(0);
+        this.dogPlanet.setScale(0);
         
         this.objectMap.set("dogPlanet", this.dogPlanet);
 
@@ -42,14 +42,14 @@ class SpaceGame061{
         this.rocket = new RainbowRocket();
         this.rocket.position = new Vector ({x: -300, y:300})
         this.rocket.direction = new Vector({x:1, y:-1})
-        this.rocket.scale(5);
+        this.rocket.setScale(5);
 
         this.objectMap.set('rokkett', this.rocket);
     
         setTimeout(()=> {
             for(let i: number = 0; i<200; i++){
                 setTimeout(() =>{
-                    this.dogPlanet.scale(i/199);
+                    this.dogPlanet.setScale(i/199);
                 },i*100);
             }
         },1000);
