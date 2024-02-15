@@ -31,7 +31,7 @@ class SpaceGame {
 
     constructor(mission: string) {
         this.rocket = new RainbowRocket();
-        this.rocket.position = new Vector ({x: -3000, y:5300})
+        this.rocket.position = new Vector ({x: 0, y:0})
         this.rocket.direction = new Vector({x:1, y:-1})
         this.rocket.setScale(5);
         // set selection = rocket for default
@@ -42,7 +42,7 @@ class SpaceGame {
             
             
             this.godPlanet = new SpaceObject(
-            new Vector({x:-20,y:-20}),          //Position
+            new Vector({x:-500,y:0}),          //Position
             new Vector(),                       //velocity
             new Vector(1,0),                    //direction
             .3,                                 //rotation
@@ -52,7 +52,7 @@ class SpaceGame {
             
             
             this.dogPlanet = new SpaceObject(
-            new Vector({x:-20,y:-20}),          //position
+            new Vector({x:-500,y:0}),          //position
             new Vector(),                       //velocity
             new Vector(1,0),                    //direction
             1,                                  //rotation
@@ -60,35 +60,35 @@ class SpaceGame {
             "../resources/gravityPlanet06.png"  //image-URI
             )
             this.dogPlanet.mass = 20;
-            this.dogPlanet.setScale(0);        
-
+            this.dogPlanet.setScale(0.5);        
+            
+            //Der soll später Motorradgeräusche machen
             this.bromber = new SpaceObject(
-                Vector.fromPoint({x: -3000, y:5300}),
+                Vector.fromPoint({x: 1000, y:0}),
                 new Vector(),
                 Vector.fromLengthAndAngle(1,0),
-                0,
+                1,
                 undefined, 
                 "../resources/spacecraft031.png"
             )
-            this.bromber.setScale(.3)
+            this.bromber.setScale(1)
+            this.selection = this.bromber;
+            console.log("selection set to bromber")
+
             
             //Stelle sicher, dass die SpaceObjects in der richtigen Reihenfolge gerendert werden
             this.objectMap.set('godPlanet', this.godPlanet);
             this.objectMap.set("dogPlanet", this.dogPlanet);
             this.objectMap.set("bromber", this.bromber);
             this.objectMap.set(`rokket`, this.rocket)
-
-            
-
-        }
-
-   
+            }
     }
 
     private gameLoop(){
         
         requestAnimationFrame(() => this.gameLoop());
         this.rocket.handleKeyboardInput(this.gameEnvironment.keyBoardController.getKeysPressed())
+       
     //  this.background.refresh(this.objectMap);
         this.updateElements();
 
@@ -198,13 +198,13 @@ class SpaceGame {
     }
 
     public init(){
-        // füge die SVG Elemente der Spielfiguren ins gameEnvironment
+        /* füge die SVG Elemente der Spielfiguren ins gameEnvironment
         this.objectMap.forEach((object, key) => {
             if (object.svgElem){
                 this.gameEnvironment.svgElement.appendChild(object.svgElem);
-                
             }
-        });
+        });*/
+        // insert the gameEnvironment svg to svg Container
         document.getElementById('svgContainer')!.appendChild(this.gameEnvironment.svgElement);
         
         
@@ -217,26 +217,38 @@ class SpaceGame {
         const rocketWithPosition = this.rocket as { position: Vector  };
         const selectionWithPosition = this.selection as { position: Vector };
 
+        let arrow2Direction;
+        let arrow2ScaleFactor; 
+
+        console.log(this.rocket.direction.angle)
+
         this.objectMap.forEach((object, key) => {
-            if(key != "bromber")
+           // if(key != "bromber")
             object.update();
             if(object.svgElem){
                 this.gameEnvironment.svgElement.appendChild(object.svgElem);
-                
             }
-            
         });
+        //this.bromber!.rotationPivot = {x:100, y:100}
 
-        this.gameEnvironment.setLabel1("Distance to dog:"+this.rocket.distance(this.dogPlanet!.position).toFixed(2).toString())
-        //this.gameEnvironment.setLabel2(`yPosition: ${this.rocket.position.y.toFixed(2)}`) //Die Verwendung von Backticks (`) anstelle von einfachen oder doppelten Anführungszeichen ermöglicht die direkte Einfügung von JavaScript-Ausdrücken innerhalb der Zeichenkette. Beide Methoden erreichen dasselbe Ziel, aber der zweite Ausdruck mit Template Literal ist in der Regel leserlicher und einfacher zu handhaben, besonders wenn komplexe Ausdrücke oder mehrere Variablen eingefügt werden müssen. Template Literals bieten auch eine verbesserte Lesbarkeit, da sie mehrzeilige Zeichenketten unterstützen, ohne dass Escape-Zeichen erforderlich sind.
-        this.gameEnvironment.setLabel3(this.rocket.velocity.length.toFixed(2))
+        this.gameEnvironment.setLabel1("Rocket Direction:"+this.rocket.direction.angle.toFixed(0))
+        this.gameEnvironment.setLabel2(`Bromber Postion: ${this.bromber!.position.x.toFixed(0)}, ${this.bromber!.position.y.toFixed(0)}`) //Die Verwendung von Backticks (`) anstelle von einfachen oder doppelten Anführungszeichen ermöglicht die direkte Einfügung von JavaScript-Ausdrücken innerhalb der Zeichenkette. Beide Methoden erreichen dasselbe Ziel, aber der zweite Ausdruck mit Template Literal ist in der Regel leserlicher und einfacher zu handhaben, besonders wenn komplexe Ausdrücke oder mehrere Variablen eingefügt werden müssen. Template Literals bieten auch eine verbesserte Lesbarkeit, da sie mehrzeilige Zeichenketten unterstützen, ohne dass Escape-Zeichen erforderlich sind.
+        this.gameEnvironment.setLabel3(`Selection Pos: ${this.selection.position.x.toFixed(0)}, ${this.selection.position.y.toFixed(0)}`)
         this.gameEnvironment.setArrow1(this.rocket.velocity.angle/Math.PI*180 + 90, this.rocket.velocity.length)
         this.gameEnvironment.setLabel4(Vector.betweenPoints(this.rocket.position, this.selection.position).length.toFixed(2))
         if(this.selection == this.rocket){
             this.gameEnvironment.setArrow2(this.selection.direction.angle/Math.PI*180 + 90, 1)
         }
         else {// set the scale of the arrow proportional to the distance to the selected object
-            this.gameEnvironment.setArrow2(Vector.betweenPoints(this.rocket.position, this.selection.position).angle/Math.PI*180 + 90, 1 ) //see bulky statement above / Vector.betweenPoints(rocketWithPosition.position, selectionWithPosition.position).length
+            arrow2ScaleFactor = 1000 / Vector.betweenPoints(rocketWithPosition.position, selectionWithPosition.position).length //see bulky statement above
+            if(arrow2ScaleFactor <.2)
+                arrow2ScaleFactor = .2;
+            if(arrow2ScaleFactor >2)
+                arrow2ScaleFactor = 2;
+            
+            arrow2Direction = Vector.betweenPoints(this.rocket.position, this.selection.position).angle/Math.PI*180 + 90
+            this.gameEnvironment.setArrow2(arrow2Direction, arrow2ScaleFactor) 
+            //console.log(Vector.betweenPoints(this.rocket.position, this.selection.position).angle)
         }
     }
 }

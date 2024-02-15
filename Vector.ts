@@ -14,10 +14,11 @@ class Vector {
       if (args.length === 2 && typeof args[0] === `number` && typeof args[1] === `number`){
             let [length, angle] = args;
             this._length = length;
+            
             if (angle >= 360 || angle < 0) {
                 angle = ((angle % 360) + 360) % 360;
             }
-            this._angle = angle;
+            this._angle = angle/180 * Math.PI;
           }
         
         if (args.length ===1){
@@ -41,13 +42,13 @@ class Vector {
 
     static fromPoint(point: {x: number, y: number}): Vector {
         const length = Math.sqrt(Math.pow(point.x, 2) + Math.pow(point.y, 2));
-        const angle = Math.atan2(point.y, point.x);
+        const angle = Math.atan2(point.y, point.x) / Math.PI * 180;
         return new Vector(length, angle);
     }
 
     static betweenPoints(point1: {x: number, y: number}, point2: {x: number, y: number}): Vector {
         const length = Math.sqrt(Math.pow(point2.x - point1.x, 2) + Math.pow(point2.y - point1.y, 2));
-        const angle = Math.atan2(point2.y - point1.y, point2.x - point1.x);
+        const angle = Math.atan2(point2.y - point1.y, point2.x - point1.x) / Math.PI * 180;
         return new Vector(length, angle);
     }
 
@@ -75,11 +76,8 @@ class Vector {
       */
     }
 
-    
-
     get angle(): number {
-
-        return this._angle;
+        return this._angle / 180 * Math.PI;
     }
     
     get length(): number {
@@ -99,7 +97,7 @@ class Vector {
     }
 
     set angle(n: number){
-      this._angle = n;
+      this._angle = n / 180 * Math.PI;
     }
 
     toPoint(): {x:number, y: number} {

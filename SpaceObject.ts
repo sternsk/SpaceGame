@@ -26,7 +26,7 @@ class SpaceObject {
     constructor(
         position: Vector, 
         velocity: Vector, 
-        direction: number, 
+        direction: Vector, 
         rotation: number);
 
     constructor();
@@ -67,6 +67,8 @@ class SpaceObject {
                     
                     this._image.setAttribute('x', ((this._position.toPoint().x - this.centerOfImage.x).toString()));//probiere auch this.image.getBBox().width und 
                     this._image.setAttribute('y', ((this._position.toPoint().y - this.centerOfImage.y).toString())); // -  this.image.height.baseVal.value/ 2
+                    this._rotationPivot = this.position;
+                    //console.log("rotationPivot set by Spaceobject")
                     }
                 };
             }    
@@ -142,6 +144,10 @@ class SpaceObject {
         return this._rotation;
     }
 
+    get rotationPivot(){
+        return this._rotationPivot;
+    }
+
     get scale(): number{
         return this._scale;
     }
@@ -194,14 +200,13 @@ class SpaceObject {
     }
     // Methode zur Änderung der direction
     rotate(angle: number): void {
-        
-        let direct = this._direction.angle/ Math.PI * 180;
+        let direct = this._direction.angle;
         direct += angle;
         
         if (direct >= 360 || direct < 0) {
             direct = ((direct % 360) + 360) % 360;
         }
-        this._direction.angle = direct/ 180 * Math.PI;
+        this._direction.angle = direct;
     }
 
     set direction(d: Vector){
@@ -247,7 +252,7 @@ class SpaceObject {
                 const transform = 
                     `translate( ${this._position.toPoint().x}, 
                             ${this._position.toPoint().y}) 
-                    rotate(${this._direction.angle/Math.PI * 180 + 90}, 
+                    rotate(${this._direction.angle+90}, 
                             ${this._rotationPivot.x}, 
                             ${this._rotationPivot.y}) 
                     scale(${this._scale})`;

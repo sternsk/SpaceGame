@@ -24,10 +24,10 @@ class GameEnvironment{
 
     constructor(){
         //initialisiere UserSpace
-        this._viewBoxLeft = -200;
-        this._viewBoxTop = -200;
-        this._viewBoxWidth = 600;
-        this._viewBoxHeight = 600;
+        this._viewBoxLeft = -500;
+        this._viewBoxTop = -500;
+        this._viewBoxWidth = 2000;
+        this._viewBoxHeight = 2000;
 
         //eine Reihe Kontrollelemte: aktuelle Flüghöhe, aktuelles Energielevel, Mauszeigerposition, aktuelle Masse...
         this.controlElements = [];
