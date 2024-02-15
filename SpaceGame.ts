@@ -31,8 +31,8 @@ class SpaceGame {
 
     constructor(mission: string) {
         this.rocket = new RainbowRocket();
-        this.rocket.position = new Vector ({x: 0, y:0})
-        this.rocket.direction = new Vector({x:1, y:-1})
+        this.rocket.position = Vector.fromPoint ({x: 0, y:0})
+        this.rocket.direction = Vector.fromPoint({x:1, y:-1})
         this.rocket.setScale(5);
         // set selection = rocket for default
         this.selection = this.rocket;
@@ -42,18 +42,17 @@ class SpaceGame {
             
             
             this.godPlanet = new SpaceObject(
-            new Vector({x:-500,y:0}),          //Position
-            new Vector(),                       //velocity
+            Vector.fromPoint({x:-500,y:0}),          //Position
+            new Vector(0,0),                       //velocity
             new Vector(1,0),                    //direction
             .3,                                 //rotation
             undefined,                          //svgElement
             "../resources/gravityPlanet07.png" 
             )
             
-            
             this.dogPlanet = new SpaceObject(
-            new Vector({x:-500,y:0}),          //position
-            new Vector(),                       //velocity
+            Vector.fromPoint({x:-500,y:0}),          //position
+            new Vector(0,0),                       //velocity
             new Vector(1,0),                    //direction
             1,                                  //rotation
             undefined,                          //svgElement
@@ -65,16 +64,13 @@ class SpaceGame {
             //Der soll später Motorradgeräusche machen
             this.bromber = new SpaceObject(
                 Vector.fromPoint({x: 1000, y:0}),
-                new Vector(),
+                new Vector(0,0),
                 Vector.fromLengthAndAngle(1,0),
                 1,
                 undefined, 
                 "../resources/spacecraft031.png"
             )
             this.bromber.setScale(1)
-            this.selection = this.bromber;
-            console.log("selection set to bromber")
-
             
             //Stelle sicher, dass die SpaceObjects in der richtigen Reihenfolge gerendert werden
             this.objectMap.set('godPlanet', this.godPlanet);
@@ -159,7 +155,7 @@ class SpaceGame {
                                                     das wir erreichen wollen. Je größer der Pfeil, desto näher das Schiff! Auf gehts Commander, 
                                                     lassen Sie uns das Schiff erreichen!`)
                     if(this.bromber){
-                    this.selection = this.bromber;
+                    //this.selection = this.bromber;
                     
                     this.message8 = true;
                     }
@@ -220,8 +216,6 @@ class SpaceGame {
         let arrow2Direction;
         let arrow2ScaleFactor; 
 
-        console.log(this.rocket.direction.angle)
-
         this.objectMap.forEach((object, key) => {
            // if(key != "bromber")
             object.update();
@@ -232,12 +226,12 @@ class SpaceGame {
         //this.bromber!.rotationPivot = {x:100, y:100}
 
         this.gameEnvironment.setLabel1("Rocket Direction:"+this.rocket.direction.angle.toFixed(0))
-        this.gameEnvironment.setLabel2(`Bromber Postion: ${this.bromber!.position.x.toFixed(0)}, ${this.bromber!.position.y.toFixed(0)}`) //Die Verwendung von Backticks (`) anstelle von einfachen oder doppelten Anführungszeichen ermöglicht die direkte Einfügung von JavaScript-Ausdrücken innerhalb der Zeichenkette. Beide Methoden erreichen dasselbe Ziel, aber der zweite Ausdruck mit Template Literal ist in der Regel leserlicher und einfacher zu handhaben, besonders wenn komplexe Ausdrücke oder mehrere Variablen eingefügt werden müssen. Template Literals bieten auch eine verbesserte Lesbarkeit, da sie mehrzeilige Zeichenketten unterstützen, ohne dass Escape-Zeichen erforderlich sind.
+        this.gameEnvironment.setLabel2(`Bromber Position: ${this.bromber!.position.x.toFixed(0)}, ${this.bromber!.position.y.toFixed(0)}`) //Die Verwendung von Backticks (`) anstelle von einfachen oder doppelten Anführungszeichen ermöglicht die direkte Einfügung von JavaScript-Ausdrücken innerhalb der Zeichenkette. Beide Methoden erreichen dasselbe Ziel, aber der zweite Ausdruck mit Template Literal ist in der Regel leserlicher und einfacher zu handhaben, besonders wenn komplexe Ausdrücke oder mehrere Variablen eingefügt werden müssen. Template Literals bieten auch eine verbesserte Lesbarkeit, da sie mehrzeilige Zeichenketten unterstützen, ohne dass Escape-Zeichen erforderlich sind.
         this.gameEnvironment.setLabel3(`Selection Pos: ${this.selection.position.x.toFixed(0)}, ${this.selection.position.y.toFixed(0)}`)
-        this.gameEnvironment.setArrow1(this.rocket.velocity.angle/Math.PI*180 + 90, this.rocket.velocity.length)
+        this.gameEnvironment.setArrow1(this.rocket.velocity.angle + 90, this.rocket.velocity.length)
         this.gameEnvironment.setLabel4(Vector.betweenPoints(this.rocket.position, this.selection.position).length.toFixed(2))
         if(this.selection == this.rocket){
-            this.gameEnvironment.setArrow2(this.selection.direction.angle/Math.PI*180 + 90, 1)
+            this.gameEnvironment.setArrow2(this.selection.direction.angle + 90, 1)
         }
         else {// set the scale of the arrow proportional to the distance to the selected object
             arrow2ScaleFactor = 1000 / Vector.betweenPoints(rocketWithPosition.position, selectionWithPosition.position).length //see bulky statement above
@@ -246,7 +240,7 @@ class SpaceGame {
             if(arrow2ScaleFactor >2)
                 arrow2ScaleFactor = 2;
             
-            arrow2Direction = Vector.betweenPoints(this.rocket.position, this.selection.position).angle/Math.PI*180 + 90
+            arrow2Direction = Vector.betweenPoints(this.rocket.position, this.selection.position).angle + 90
             this.gameEnvironment.setArrow2(arrow2Direction, arrow2ScaleFactor) 
             //console.log(Vector.betweenPoints(this.rocket.position, this.selection.position).angle)
         }

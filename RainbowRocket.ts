@@ -18,8 +18,8 @@ class RainbowRocket extends SpaceObject {
 
     // Actual constructor implementation
     constructor(
-        position: Vector = new Vector({x:0, y:0}), 
-        velocity: Vector = new Vector({x:0,y:0}), 
+        position: Vector = Vector.fromPoint({x:0, y:0}), 
+        velocity: Vector = Vector.fromPoint({x:0,y:0}), 
         direction: Vector = new Vector(1, 0),
         rotation: number = 0, 
         gElement?: SVGGElement,

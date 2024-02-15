@@ -1,6 +1,6 @@
 class SpaceObject {
-    protected _position: Vector = new Vector({x:0,y:0});
-    protected _velocity: Vector = new Vector({x:0,y:0});
+    protected _position: Vector = Vector.fromPoint({x:0,y:0});
+    protected _velocity: Vector = Vector.fromPoint({x:0,y:0});
     protected _direction: Vector = new Vector(1, 0); // Radians
     protected _rotation: number = 0;  // enduring rotation in Radians
     protected _scale: number = 1;
@@ -65,8 +65,8 @@ class SpaceObject {
                         this._imageWidth = this._image.getBBox().width;
                         this.centerOfImage = {x: this._image.getBBox().width / 2, y: this._image.getBBox().height / 2}
                     
-                    this._image.setAttribute('x', ((this._position.toPoint().x - this.centerOfImage.x).toString()));//probiere auch this.image.getBBox().width und 
-                    this._image.setAttribute('y', ((this._position.toPoint().y - this.centerOfImage.y).toString())); // -  this.image.height.baseVal.value/ 2
+                    this._image.setAttribute('x', ((this._position.x - this.centerOfImage.x).toString()));//probiere auch this.image.getBBox().width und 
+                    this._image.setAttribute('y', ((this._position.y - this.centerOfImage.y).toString())); // -  this.image.height.baseVal.value/ 2
                     this._rotationPivot = this.position;
                     //console.log("rotationPivot set by Spaceobject")
                     }
@@ -250,9 +250,9 @@ class SpaceObject {
   
         if (this.gElement) {
                 const transform = 
-                    `translate( ${this._position.toPoint().x}, 
-                            ${this._position.toPoint().y}) 
-                    rotate(${this._direction.angle+90}, 
+                    `translate( ${this._position.x}, 
+                            ${this._position.y}) 
+                    rotate(${this._direction.angle + 90}, 
                             ${this._rotationPivot.x}, 
                             ${this._rotationPivot.y}) 
                     scale(${this._scale})`;

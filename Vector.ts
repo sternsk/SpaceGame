@@ -2,17 +2,8 @@ class Vector {
     private _length: number = 0;
     private _angle: number = 0;
   
-    constructor();
-    constructor(length: number, angle: number);
-    constructor(point:{x:number, y:number});
-
-    //this constructor overload is not callable
-    constructor(point1:{x1: number, y1: number}, point2:{x2: number, y2: number});
-    constructor(...args: any[]){
-      //definitely assign properties
+    constructor(length: number, angle: number){
         
-      if (args.length === 2 && typeof args[0] === `number` && typeof args[1] === `number`){
-            let [length, angle] = args;
             this._length = length;
             
             if (angle >= 360 || angle < 0) {
@@ -21,17 +12,6 @@ class Vector {
             this._angle = angle/180 * Math.PI;
           }
         
-        if (args.length ===1){
-            const [point] = args;
-            this._length = Math.sqrt(Math.pow(point.x, 2) + Math.pow(point.y, 2));
-            this._angle = Math.atan2(point.y, point.x);
-          }
-        if (args.length ===2 && typeof args[0] === `object` && typeof args[1] === `object`){
-            const [point1, point2] = args;
-            this._length = Math.sqrt(Math.pow(point2.x - point1.x, 2) + Math.pow(point2.y - point1.y, 2));
-            this._angle = Math.atan2(point2.y - point1.y, point2.x - point1.x);
-          }
-    }
     
     static fromLengthAndAngle(length: number, angle: number): Vector {
       if (angle >= 360 || angle < 0) {
@@ -42,13 +22,13 @@ class Vector {
 
     static fromPoint(point: {x: number, y: number}): Vector {
         const length = Math.sqrt(Math.pow(point.x, 2) + Math.pow(point.y, 2));
-        const angle = Math.atan2(point.y, point.x) / Math.PI * 180;
+        const angle = Math.atan2(point.y, point.x);
         return new Vector(length, angle);
     }
 
     static betweenPoints(point1: {x: number, y: number}, point2: {x: number, y: number}): Vector {
         const length = Math.sqrt(Math.pow(point2.x - point1.x, 2) + Math.pow(point2.y - point1.y, 2));
-        const angle = Math.atan2(point2.y - point1.y, point2.x - point1.x) / Math.PI * 180;
+        const angle = Math.atan2(point2.y - point1.y, point2.x - point1.x);
         return new Vector(length, angle);
     }
 
@@ -67,7 +47,7 @@ class Vector {
       const newX = this.x + v.x;
       const newY = this.y + v.y;
       
-      return new Vector({x: newX, y: newY})
+      return Vector.fromPoint({x: newX, y: newY})
       /* Convert back to scalars
       this._length = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
       this._angle = Math.atan2(y, x);
@@ -77,7 +57,7 @@ class Vector {
     }
 
     get angle(): number {
-        return this._angle / 180 * Math.PI;
+        return this._angle * 180 / Math.PI;
     }
     
     get length(): number {
@@ -93,7 +73,7 @@ class Vector {
     }
 
     scale(factor: number): Vector {
-        return new Vector({x: this.toPoint().x * factor, y: this.toPoint().y * factor});
+        return Vector.fromPoint({x: this.toPoint().x * factor, y: this.toPoint().y * factor});
     }
 
     set angle(n: number){
