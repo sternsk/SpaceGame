@@ -1,8 +1,8 @@
 class SpaceObject {
     protected _position: Vector = Vector.fromPoint({x:0,y:0});
     protected _velocity: Vector = Vector.fromPoint({x:0,y:0});
-    protected _direction: Vector = new Vector(1, 0); // Radians
-    protected _rotation: number = 0;  // enduring rotation in Radians
+    protected _direction: Vector = new Vector(1, 0); // degrees
+    protected _rotation: number = 0;  // enduring rotation in degrees
     protected _scale: number = 1;
     protected _maneuverability: number = 5;
     protected _mass?: number; 
@@ -18,7 +18,7 @@ class SpaceObject {
     constructor(
         position: Vector, 
         velocity: Vector, 
-        direction: Vector,      // Radians
+        direction: Vector,      // degrees
         rotation: number,
         gElement?: SVGElement,
         imageUrl?: string       // Optionaler Parameter für das Bild
@@ -65,9 +65,9 @@ class SpaceObject {
                         this._imageWidth = this._image.getBBox().width;
                         this.centerOfImage = {x: this._image.getBBox().width / 2, y: this._image.getBBox().height / 2}
                     
-                    this._image.setAttribute('x', ((this._position.x - this.centerOfImage.x).toString()));//probiere auch this.image.getBBox().width und 
-                    this._image.setAttribute('y', ((this._position.y - this.centerOfImage.y).toString())); // -  this.image.height.baseVal.value/ 2
-                    this._rotationPivot = this.position;
+                    this._image.setAttribute('x', ((-this.centerOfImage.x).toString()));//probiere auch this.image.getBBox().width und 
+                    this._image.setAttribute('y', ((-this.centerOfImage.y).toString())); // -  this.image.height.baseVal.value/ 2
+                    
                     //console.log("rotationPivot set by Spaceobject")
                     }
                 };
@@ -77,24 +77,16 @@ class SpaceObject {
             this._rotation = 0;
             this._mass = 0;
         }
+        
+
     }
 
     // Methode zur Beschleunigung in Blickrichtung
     accelerate(thrust: number): void {
-        // erzeuge einen Vektor aus dem Schub und der aktuellen _direction 
-        let accelerationVector = new Vector(thrust, this._direction.angle);
-        
+   
         // Hinzufügen der Beschleunigung zur aktuellen Geschwindigkeit
-        this.velocity = this._velocity.add(accelerationVector);
-
-   /*
-   // umgehe das swapping-Problem der y-Achse. Aber wundere dich nicht, es taucht an anderer Stelle wieder auf!
-        // Umwandlung der direction in einen Richtungsvektor
-        let direction = new Vector(Math.cos((this.direction-90) * Math.PI / 180), Math.sin((this.direction-90) * Math.PI / 180));
+        this._velocity = this._velocity.add(this._direction.scale(thrust));
         
-        // Hinzufügen der Beschleunigung zur aktuellen Geschwindigkeit
-        this.velocity = this.velocity.add(direction.scale(thrust));
-        */
     
     }
 
@@ -232,8 +224,8 @@ class SpaceObject {
         this._scale= s;
     }
 
-    set rotationPivot({x,y}: {x: number, y: number}){
-        this._rotationPivot = { x, y };
+    setRotationPivot({x, y}: {x: number, y: number}){
+        this._rotationPivot = {x, y};
     }
     
     set velocity(velocity: Vector){
@@ -242,7 +234,7 @@ class SpaceObject {
 
     update(): void {
         //update position
-        this._position = this._position.add(this._velocity);
+        this.position = this._position.add(this._velocity);
         //console.log("this._position.toPoint().x: ",this._position.toPoint().x, "this._position.toPoint().y: ", this._position.toPoint().y);
         
         //update rotation;
@@ -252,9 +244,9 @@ class SpaceObject {
                 const transform = 
                     `translate( ${this._position.x}, 
                             ${this._position.y}) 
-                    rotate(${this._direction.angle + 90}, 
-                            ${this._rotationPivot.x}, 
-                            ${this._rotationPivot.y}) 
+                    rotate(${this._direction.angle + 90},
+                            ${this._rotationPivot.x},
+                            ${this._rotationPivot.y})
                     scale(${this._scale})`;
                 this.gElement.setAttribute('transform', transform);
         }

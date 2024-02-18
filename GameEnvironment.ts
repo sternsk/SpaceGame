@@ -26,8 +26,8 @@ class GameEnvironment{
         //initialisiere UserSpace
         this._viewBoxLeft = -500;
         this._viewBoxTop = -500;
-        this._viewBoxWidth = 2000;
-        this._viewBoxHeight = 2000;
+        this._viewBoxWidth = 1000;
+        this._viewBoxHeight = 1000;
 
         //eine Reihe Kontrollelemte: aktuelle Flüghöhe, aktuelles Energielevel, Mauszeigerposition, aktuelle Masse...
         this.controlElements = [];
@@ -58,18 +58,16 @@ class GameEnvironment{
         this.arrowBox1.setAttribute("height", "100px")
         this.arrowBox1.setAttribute("viewBox", "-50 -50 100 100")
         
-        
         this.arrowBox1.appendChild(this.arrow2)
         this.arrowBox1.appendChild(this.arrow1)
         
         this.label3 = document.createElement("div");
         this.label3.setAttribute('class', 'transformValue')
-        this.label3.textContent = "Rocket velocity:";
-        
+        this.label3.textContent = "Label 3";
         
         this.label4 = document.createElement("div");
         this.label4.setAttribute('class', 'transformValue')
-        this.label4.textContent = "Rocket direction:";
+        this.label4.textContent = "Label 4:";
 
         this.ArrowBox2 = document.createElementNS("http://www.w3.org/2000/svg", "svg");
         this.ArrowBox2.setAttribute("style", "position: static;")

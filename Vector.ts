@@ -2,33 +2,35 @@ class Vector {
     private _length: number = 0;
     private _angle: number = 0;
   
-    constructor(length: number, angle: number){
+    constructor(length: number, degrees: number){
         
             this._length = length;
             
-            if (angle >= 360 || angle < 0) {
-                angle = ((angle % 360) + 360) % 360;
+            if (degrees >= 360 || degrees < 0) {
+                degrees = ((degrees % 360) + 360) % 360;
             }
-            this._angle = angle/180 * Math.PI;
+            this._angle = degrees/180 * Math.PI;
           }
         
     
-    static fromLengthAndAngle(length: number, angle: number): Vector {
+    static fromLengthAndAngle(length: number, angle: number): Vector { //get angle in degree
       if (angle >= 360 || angle < 0) {
           angle = ((angle % 360) + 360) % 360;
       }
+
       return new Vector(length, angle);
     }
 
     static fromPoint(point: {x: number, y: number}): Vector {
         const length = Math.sqrt(Math.pow(point.x, 2) + Math.pow(point.y, 2));
-        const angle = Math.atan2(point.y, point.x);
+        const angle = Math.atan2(point.y, point.x) / Math.PI * 180;
+        
         return new Vector(length, angle);
     }
 
     static betweenPoints(point1: {x: number, y: number}, point2: {x: number, y: number}): Vector {
         const length = Math.sqrt(Math.pow(point2.x - point1.x, 2) + Math.pow(point2.y - point1.y, 2));
-        const angle = Math.atan2(point2.y - point1.y, point2.x - point1.x);
+        const angle = Math.atan2(point2.y - point1.y, point2.x - point1.x) / Math.PI * 180;
         return new Vector(length, angle);
     }
 
@@ -80,7 +82,7 @@ class Vector {
       this._angle = n / 180 * Math.PI;
     }
 
-    toPoint(): {x:number, y: number} {
+    toPoint(): {x: number, y: number} {
       // Create a point object with the x and y coordinates of the vector
       let x= this._length * Math.cos(this._angle);
       let y= this._length * Math.sin(this._angle);
@@ -89,7 +91,7 @@ class Vector {
       if (y < 0) {
         y += 2 * Math.PI;
       }
-*/
+      */
       return { x, y };
     }
 
