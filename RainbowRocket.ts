@@ -90,14 +90,14 @@ class RainbowRocket extends SpaceObject {
         const wingLeft = document.createElementNS(this.svgNS, "path");
         wingLeft.setAttribute("id", "wingLeft");
         wingLeft.setAttribute("d", "M-2 -3 q-1.5 1, -2 3 q1 -0.5, 2 -1z");
-        wingLeft.setAttribute("fill", "darkblue");
+        wingLeft.setAttribute("fill", "darkslateblue");
         g.appendChild(wingLeft);
         
 
         const wingRight = document.createElementNS(this.svgNS, "path");
         wingRight.setAttribute("id", "wingRight");
         wingRight.setAttribute("d", "M 2 -3 q1.5 1 ,2 3 q-1 -0.5, -2 -1z");
-        wingRight.setAttribute("fill", "darkblue");
+        wingRight.setAttribute("fill", "darkslateblue");
         g.appendChild(wingRight);
 
         const fire = document.createElementNS(this.svgNS, "path");
@@ -135,13 +135,13 @@ class RainbowRocket extends SpaceObject {
         const topwindow = document.createElementNS(this.svgNS, "path");
         topwindow.setAttribute("id", "topwindow");
         topwindow.setAttribute("d", "M -1 -5 q .75 -.75, 1 -1 q .75 .75, 1 1 q -1 -.25, -2 0");
-        topwindow.setAttribute("fill", "darkblue");
+        topwindow.setAttribute("fill", "darkslateblue");
         g.appendChild(topwindow);
 
         const middlewindow = document.createElementNS(this.svgNS, "path");
         middlewindow.setAttribute("id", "middlewindow");
         middlewindow.setAttribute("d", "M-1 -3 q -.5 2, 0 4 q .5 .15, 1 0 q -.5 -2, 0 -4 q -.5 -.15, -1 0");
-        middlewindow.setAttribute("fill", "darkblue");
+        middlewindow.setAttribute("fill", "darkslateblue");
         g.appendChild(middlewindow);
 
         const summit = document.createElementNS(this.svgNS, "line");

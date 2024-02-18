@@ -1,5 +1,6 @@
 class SpaceGame {
     gameEnvironment= new GameEnvironment();
+    frameRateManager = new FrameRateManager();
 
     //allocate controlvariables for possible missions
     mission: string = "goddog"; //Testmission
@@ -12,10 +13,15 @@ class SpaceGame {
     message6 = false; 
     message7 = false; 
     message8 = false; 
+    message8a = false; 
+    message9 = false; 
     enableSpeedTest = false;
     speedTest = false; 
     enableBromberMission = false;
     enableDogMission = false;
+    decision = "";
+    bromberActivationSequence = false;
+    actualTimestamp: number = 0;
 
     //allocate all sprites for all possible missions
     rocket: RainbowRocket;
@@ -41,17 +47,16 @@ class SpaceGame {
         //
         if (mission === "goddog") {             //Initialisierung der Mission "goddog" und den entsprechenden SpaceObjects
             this.godPlanet = new SpaceObject(
-            Vector.fromPoint({x:-300,y:0}),          //Position
+            Vector.fromPoint({x:-3000,y:500}),          //Position
             new Vector(0,0),                       //velocity
             new Vector(1,0),                    //direction
             .3,                                 //rotation
             undefined,                          //svgElement
             "../resources/gravityPlanet07.png" 
             )
-            //console.log(this.godPlanet?.position.x, this.godPlanet?.position.y)
-
+            
             this.dogPlanet = new SpaceObject(
-            Vector.fromPoint({x:-200,y:0}),          //position
+            Vector.fromPoint({x:-3000,y:500}),          //position
             new Vector(0,0),                       //velocity
             new Vector(1,0),                    //direction
             1,                                  //rotation
@@ -59,16 +64,14 @@ class SpaceGame {
             "../resources/gravityPlanet06.png"  //image-URI
             )
             this.dogPlanet.mass = 20;
-            this.dogPlanet.setScale(.5);   
-            this.dogPlanet.setRotationPivot({x: -100,y: 0}   )  
-            console.log("rotationPivot set to ", this.dogPlanet.rotationPivot)
+            this.dogPlanet.setScale(0);   
             
             //Der soll später Motorradgeräusche machen
             this.bromber = new SpaceObject(
                 Vector.fromPoint({x: 1000, y:100}),
                 new Vector(0,0),
-                Vector.fromLengthAndAngle(1,0),
-                1,
+                Vector.fromLengthAndAngle(0,0),
+                0,
                 undefined, 
                 "../resources/spacecraft031.png"
             )
@@ -85,12 +88,14 @@ class SpaceGame {
     private gameLoop(){
         
         requestAnimationFrame(() => this.gameLoop());
+        this.frameRateManager.update(); 
+        //console.log(this.frameRateManager.getFPS())
+        
         this.rocket.handleKeyboardInput(this.gameEnvironment.keyBoardController.getKeysPressed())
-       
+        
     //  this.background.refresh(this.objectMap);
         this.updateElements();
-        console.log("rotationPivot in gameLoop: ",this.dogPlanet?.rotationPivot)
-
+        
     //erstelle die Logik der einzelnen Missionen
         switch(this.mission){
             
@@ -99,37 +104,44 @@ class SpaceGame {
                 this.gameEnvironment.viewBoxTop = this.rocket.position.y - this.gameEnvironment.viewBoxHeight/ 2;
 
                 if(!this.initialMessageShown){
+                    //this.gameEnvironment.windowSmoothly(2, this.frameRateManager.getFPS(), 8000, this.rocket.position.toPoint())
+                
                     setTimeout(()=> {
                         this.gameEnvironment.setMessage(`Ich begrüße Sie herzlich, Commander. Dies ist Ihre Rakete und wir sind Ihre Crew. 
                         Wir begleiten Sie bei Ihrer Reise durch den Raum. 
                         Steuern Sie die Rakete mit den Pfeiltasten.`)
                     },8000);
+                    this.initialMessageShown = true;
                 }
-                this.initialMessageShown = true;
+                
+
 
                 if(!this.message2){
                     setTimeout(()=> {
                         this.gameEnvironment.setMessage(`Am linken Bildschirmrand sehen Sie eine Reihe von Kontrollinstrumenten. 
                         `)
                     },29000);
+                    this.message2 = true;
                 }
-                this.message2 = true; 
+                 
 
                 if(!this.message3){
                     setTimeout(()=> {
                         this.gameEnvironment.setMessage(`Damit meine ich nicht die html-Links zu den anderen Seiten dieser websperiments. 
                         `)
                     },50000);
+                    this.message3 = true; 
                 }
-                this.message3 = true; 
+                
                 
                 if(!this.message4){
                     setTimeout(()=> {
                         this.gameEnvironment.setMessage(`Der blaue Pfeil zeigt die Richtung der Rakete und der weiße Pfeil die Flugrichtung. Die Größe des weißen Pfeils 
                         zeigt die Geschwindigkeit an. Wenn Sie stehen, ist kein weißer Pfeil zu sehen.`)
                     },71000);
+                    this.message4 = true; 
                 }
-                this.message4 = true; 
+                
 
                 if(!this.message5){
                     setTimeout(()=> {
@@ -140,7 +152,7 @@ class SpaceGame {
                     this.enableSpeedTest = true;
                 }
 
-                if(this.rocket.velocity.length > 30 && !this.message6 && this.enableSpeedTest){
+                if(this.rocket.velocity.length > 10 && !this.message6 && this.enableSpeedTest){
                         this.gameEnvironment.setMessage(`Krass, Commander. Sie sind richtig schnell. Bremsen Sie mal ab.`)
                         this.speedTest = true
                         this.message6 = true; 
@@ -155,18 +167,42 @@ class SpaceGame {
                 
                 if(this.enableBromberMission && !this.message8){
                     this.gameEnvironment.setMessage(`Wir haben ein Signal erhalten. Ein nahegelegenes Schiff ruft uns. Wollen wir dem Signal folgen?`);
+                    this.message8 = true;
+                    this.gameEnvironment.displayDecisions(["Ja", "Nein"], this);
+                }
+
+                if(this.decision == "Ja" && !this.message8a){
                     this.gameEnvironment.setMessage(`Ok, der blaue Pfeil, der die Richtung der Rakete anzeigte, zeigt nun auf das Schiff, 
                                                     das wir erreichen wollen. Je größer der Pfeil, desto näher das Schiff! Auf gehts Commander, 
                                                     lassen Sie uns das Schiff erreichen!`)
                     if(this.bromber){
-                    //this.selection = this.bromber;
-                    
-                    this.message8 = true;
+                    this.selection = this.bromber;
+                    this.message8a = true;
                     }
+                }
+                if(this.rocket.position.distance(this.bromber!.position) < 100 && !this.bromberActivationSequence){
+                    
+                    this.gameEnvironment.setMessage("Commander, wir haben das Schiff gefunden. Es aktiviert seine Systeme!")
+                    this.bromberActivationSequence = true;
 
+                    //Activiere die Systeme des brombers
+                    for(let i: number = 0; i<3; i++){
+                        setInterval(() => {
+                            this.bromber!.rotate(Math.random() * 20 - 10);
+                            if(i > 1)
+                                this.bromber?.accelerate(.3)
+                        },1000 + i*500)
+                        
+                    }
+                    this.actualTimestamp = performance.now();
+                }
+                
+                if(this.bromberActivationSequence && !this.message9 && performance.now() > this.actualTimestamp + 20000){
+                    this.gameEnvironment.setMessage("Commander, das Schiff geht auf Kurs. Wir sollten ihm folgen!")
+                    this.bromber!.direction = Vector.betweenPoints(this.bromber!.position, this.godPlanet!.position)
+                    this.enableDogMission = true;
                 }
 
-                
                 if (this.rocket.distance(this.godPlanet!.position) < 100 && !this.dogProcessRunning && this.enableDogMission){
                     this.dogProcessRunning = true;
                     this.gameEnvironment.setMessage(`Krass, Commander! Wir stehen hier mitten im Weltraum. Direkt vor uns befindet sich 
@@ -190,12 +226,20 @@ class SpaceGame {
             
                     }, 13000); // miliseconds
                 }
+                if(this.dogProcessRunning){ 
+                    this.actualTimestamp = performance.now();
+
+                    if(performance.now() > this.actualTimestamp + 20000){ 
+                        this.gameEnvironment.setMessage("Da fliegt es hin, das dicke Ei! Wir sollten es zurückholen. Aber wie? Commander. Ich habs. Wir brauchen ein geeignetes Gerät!")
+                    }
+
+                }
                 break;
             
         }
 
-
     }
+    
 
     public init(){
         /* füge die SVG Elemente der Spielfiguren ins gameEnvironment
@@ -229,7 +273,7 @@ class SpaceGame {
         });
         //this.bromber!.rotationPivot = {x:100, y:100}
 
-        this.gameEnvironment.setLabel1(`Rocket Position: ${this.rocket.position.x.toFixed(2)}, ${this.rocket.position.y.toFixed(2)}`)
+        //this.gameEnvironment.setLabel1(`Rocket Position: ${this.rocket.position.x.toFixed(2)}, ${this.rocket.position.y.toFixed(2)}`)
         this.gameEnvironment.setLabel2(`distance to bromber: ${this.rocket!.position.distance(this.bromber!.position).toFixed(2)}`) //Die Verwendung von Backticks (`) anstelle von einfachen oder doppelten Anführungszeichen ermöglicht die direkte Einfügung von JavaScript-Ausdrücken innerhalb der Zeichenkette. Beide Methoden erreichen dasselbe Ziel, aber der zweite Ausdruck mit Template Literal ist in der Regel leserlicher und einfacher zu handhaben, besonders wenn komplexe Ausdrücke oder mehrere Variablen eingefügt werden müssen. Template Literals bieten auch eine verbesserte Lesbarkeit, da sie mehrzeilige Zeichenketten unterstützen, ohne dass Escape-Zeichen erforderlich sind.
         //this.gameEnvironment.setLabel3(`God Pos: ${this.godPlanet!.position.x.toFixed(0)}, ${this.godPlanet!.position.y.toFixed(0)}`)
         this.gameEnvironment.setArrow1(this.rocket.velocity.angle + 90, this.rocket.velocity.length)
@@ -249,7 +293,7 @@ class SpaceGame {
             arrow2Direction = Vector.betweenPoints(this.rocket.position, this.selection.position).angle + 90
             this.gameEnvironment.setArrow2(arrow2Direction, arrow2ScaleFactor) 
             //console.log(Vector.betweenPoints(this.rocket.position, this.selection.position).angle)
-            this.gameEnvironment.setLabel4(Vector.betweenPoints(this.rocket.position, this.selection.position).length.toFixed(2))
+            //this.gameEnvironment.setLabel4(Vector.betweenPoints(this.rocket.position, this.selection.position).length.toFixed(2))
         }
     }
 }

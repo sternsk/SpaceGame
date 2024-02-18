@@ -8,7 +8,10 @@ class GameEnvironment{
     private _viewBoxHeight: number;
     private defsElement: SVGDefsElement;
     private controlElements: HTMLElement[];
-    private textBox: HTMLElement | null;
+    private textBox: HTMLElement;
+    
+    private decisionOptions: HTMLButtonElement[];
+    private decision = "";
     
     private label1: HTMLElement;
     private label2: HTMLElement;
@@ -26,19 +29,19 @@ class GameEnvironment{
         //initialisiere UserSpace
         this._viewBoxLeft = -500;
         this._viewBoxTop = -500;
-        this._viewBoxWidth = 1000;
-        this._viewBoxHeight = 1000;
+        this._viewBoxWidth = 150;
+        this._viewBoxHeight = 1; //viewBoxAttribuntes get overriden by svg-Size Attributes
 
         //eine Reihe Kontrollelemte: aktuelle Flüghöhe, aktuelles Energielevel, Mauszeigerposition, aktuelle Masse...
         this.controlElements = [];
         
         this.label1 = document.createElement("div");
         this.label1.setAttribute('class', 'transformValue')
-        this.label1.textContent = "TestText"; 
+        this.label1.textContent = "Label 1"; 
 
         this.label2 = document.createElement("div");
         this.label2.setAttribute('class', 'transformValue')
-        this.label2.textContent = "TestText"; 
+        this.label2.textContent = "Label 2"; 
         
         this.arrow1 = document.createElementNS("http://www.w3.org/2000/svg", "polygon")
         this.arrow1.setAttribute("viewBox", "-50 -50 100 100");
@@ -67,7 +70,7 @@ class GameEnvironment{
         
         this.label4 = document.createElement("div");
         this.label4.setAttribute('class', 'transformValue')
-        this.label4.textContent = "Label 4:";
+        this.label4.textContent = "Label 4";
 
         this.ArrowBox2 = document.createElementNS("http://www.w3.org/2000/svg", "svg");
         this.ArrowBox2.setAttribute("style", "position: static;")
@@ -84,7 +87,9 @@ class GameEnvironment{
 
         this.textBox = document.getElementById(`textBox`)!;
         this.textBox.style.display = `none`;
+
         
+        this.decisionOptions = [];
 
         
         //zwei html-Input-Elements für linken und rechten Daumen: links Beschleunigung, rechts Rotation
@@ -110,6 +115,37 @@ class GameEnvironment{
         this._svgElement.addEventListener('mousemove', (event) => {
             this.controlElements[0].textContent = event.clientX.toString();
         });
+    }
+
+    displayDecisions(options: string[], context: SpaceGame){
+        
+        options.forEach(element=>{
+            const option = document.createElement("button");
+            option.textContent = element;
+            option.addEventListener("click", () => {
+                // Handle the click event for this option
+                console.log("Clicked option:", element);
+                context.decision = element;
+                
+            });                     
+            document.getElementById("textBox")?.appendChild(option);
+
+        });
+    }
+
+    handleDecision(context: SpaceGame): boolean{
+        
+       
+        if(this.decision){
+            context.decision = this.decision;
+            return true;
+        }
+        else
+            return false;
+    }
+
+    getAspectRatio(): number{
+        return(this._svgElement.getBBox().width / this._svgElement.getBBox().height);
     }
 
     get svgElement(){
@@ -174,6 +210,8 @@ class GameEnvironment{
         this.label4.textContent = value;
     }
 
+    
+
     setMessage(message: string){
         //const textBox = document.getElementById(`textBox`)! //textBox as local variable
         const messageDuration: number = 20 //seconds
@@ -193,7 +231,42 @@ class GameEnvironment{
                 }
             }, messageDuration* 1000)
         }
+    }
+
+    // Zoome hyperbolisch in einer vorgegebenen Zeit auf eine vorgegebenen Fensterbreite
+    // Die Anzahl der zur Verfügung stehenden Frames ergibt sich aus der Zeitvorgabe * der actualFps
+
+    windowSmoothly(duration: number, actualFps: number, targetWidth: number, targetCenter:{x: number,y: number}){
+        const aspectRatio = this.getAspectRatio();
+        this._viewBoxHeight = this._viewBoxWidth / aspectRatio; //Clearifying the aspect - viewBoxAttributes apparently get overriden bei svg-Size Attributes 
+        const targetHeight = targetWidth / aspectRatio;         
+
+        const deltaWidth = targetWidth - this._viewBoxWidth;
+        const deltaHeight = targetHeight - this._viewBoxHeight; 
+        const totalFrames = duration * actualFps;
+        const deltaWidthPerFrame = deltaWidth / totalFrames;
+        const deltaHeightPerFrame = deltaHeight / totalFrames;
+        const xTranslationPerFrame = deltaWidthPerFrame * targetWidth / targetCenter.x
+        const yTranslationPerFrame = deltaHeightPerFrame * targetHeight / targetCenter.y
+
+        let frameCount = 0;
         
+        const animateZoom = () =>{
+            console.log(frameCount)
+            if (frameCount < totalFrames){
+                
+                this._viewBoxWidth += deltaWidthPerFrame;
+                this._viewBoxHeight += deltaHeightPerFrame;
+                this._viewBoxLeft += xTranslationPerFrame;
+                this._viewBoxTop += yTranslationPerFrame;
+                this._svgElement.setAttribute("viewBox", `${this._viewBoxLeft} ${this._viewBoxTop} ${this._viewBoxWidth} ${this._viewBoxHeight}`)
+                frameCount++;
+            
+                requestAnimationFrame(animateZoom)
+            }
+            
+        }
+        animateZoom();
         
     }
     
