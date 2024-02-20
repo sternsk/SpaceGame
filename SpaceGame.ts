@@ -3,9 +3,13 @@ class SpaceGame {
     frameRateManager = new FrameRateManager();
 
     //allocate controlvariables for possible missions
+    defaultMessageDuration = 2;
+    
     mission: string = "goddog"; //Testmission
+    windowing: string = "centered"; //preparing for different screenbehaviour
     dogProcessRunning = false;
-    initialMessageShown = false;
+    message = false;
+    message1 = false;
     message2 = false; 
     message3 = false; 
     message4 = false; 
@@ -15,6 +19,8 @@ class SpaceGame {
     message8 = false; 
     message8a = false; 
     message9 = false; 
+    messageCount = 0;
+
     enableSpeedTest = false;
     speedTest = false; 
     enableBromberMission = false;
@@ -70,12 +76,13 @@ class SpaceGame {
             this.bromber = new SpaceObject(
                 Vector.fromPoint({x: 1000, y:100}),
                 new Vector(0,0),
-                Vector.fromLengthAndAngle(0,0),
+                Vector.fromLengthAndAngle(1,0),
                 0,
                 undefined, 
                 "../resources/spacecraft031.png"
             )
             this.bromber.setScale(.3)
+
             
             //Stelle sicher, dass die SpaceObjects in der richtigen Reihenfolge gerendert werden
             this.objectMap.set('godPlanet', this.godPlanet);
@@ -100,113 +107,192 @@ class SpaceGame {
         switch(this.mission){
             
             case `goddog`:
-                this.gameEnvironment.viewBoxLeft = this.rocket.position.x - this.gameEnvironment.viewBoxWidth/ 2;
-                this.gameEnvironment.viewBoxTop = this.rocket.position.y - this.gameEnvironment.viewBoxHeight/ 2;
-
-                if(!this.initialMessageShown){
-                    //this.gameEnvironment.windowSmoothly(2, this.frameRateManager.getFPS(), 8000, this.rocket.position.toPoint())
                 
-                    setTimeout(()=> {
-                        this.gameEnvironment.setMessage(`Ich begrüße Sie herzlich, Commander. Dies ist Ihre Rakete und wir sind Ihre Crew. 
-                        Wir begleiten Sie bei Ihrer Reise durch den Raum. 
-                        Steuern Sie die Rakete mit den Pfeiltasten.`)
-                    },8000);
-                    this.initialMessageShown = true;
+                switch(this.windowing){
+                    case `centered`:
+                    this.gameEnvironment.viewBoxLeft = this.rocket.position.x - this.gameEnvironment.viewBoxWidth/ 2;
+                    this.gameEnvironment.viewBoxTop = this.rocket.position.y - this.gameEnvironment.viewBoxHeight/ 2;
+                    break;
                 }
                 
-
-
-                if(!this.message2){
-                    setTimeout(()=> {
-                        this.gameEnvironment.setMessage(`Am linken Bildschirmrand sehen Sie eine Reihe von Kontrollinstrumenten. 
-                        `)
-                    },29000);
-                    this.message2 = true;
+                
+                if(!this.message&&this.messageCount == 0){
+                    //this.gameEnvironment.windowSmoothly(2, this.frameRateManager.getFPS(), 8000, this.rocket.position.toPoint())
+                
+                    this.gameEnvironment.setMessage(`Ich begrüße Sie herzlich, Commander. Dies ist Ihre Rakete und wir sind Ihre Crew. 
+                    Wir begleiten Sie bei Ihrer Reise durch den Raum. 
+                    Steuern Sie die Rakete mit den Pfeiltasten.`, this.defaultMessageDuration, 1, (shown) =>{
+                        this.message = true;
+                        
+                    })
+                    this.messageCount++
+                    
+                }
+                
+                if(this.message && this.messageCount == 1){
+                    
+                    this.message = false;
+                    this.gameEnvironment.setMessage(`Am linken Bildschirmrand sehen Sie eine Reihe von Kontrollinstrumenten.`, 
+                    this.defaultMessageDuration,
+                    1,
+                    (shown)=>{
+                        this.message = true
+                    })
+                    this.messageCount++
                 }
                  
 
-                if(!this.message3){
-                    setTimeout(()=> {
-                        this.gameEnvironment.setMessage(`Damit meine ich nicht die html-Links zu den anderen Seiten dieser websperiments. 
-                        `)
-                    },50000);
-                    this.message3 = true; 
+                if(this.message && this.messageCount == 2){
+                    this.message = false;
+                    this.gameEnvironment.setMessage(`Damit meine ich nicht die html-Links zu den anderen Seiten dieser websperiments.`,
+                    this.defaultMessageDuration/2, 
+                    undefined, 
+                    (shown)=>{
+                        this.message = true; 
+                    })
+                    this.messageCount++
                 }
                 
                 
-                if(!this.message4){
-                    setTimeout(()=> {
-                        this.gameEnvironment.setMessage(`Der blaue Pfeil zeigt die Richtung der Rakete und der weiße Pfeil die Flugrichtung. Die Größe des weißen Pfeils 
-                        zeigt die Geschwindigkeit an. Wenn Sie stehen, ist kein weißer Pfeil zu sehen.`)
-                    },71000);
-                    this.message4 = true; 
+                if(this.message && this.messageCount == 3){
+                    this.message = false;
+                    this.gameEnvironment.setMessage(`Der blaue Pfeil zeigt die Richtung der Rakete und der weiße Pfeil die Flugrichtung. 
+                    Die Größe des weißen Pfeils 
+                    zeigt die Geschwindigkeit an. Wenn Sie stehen, ist kein weißer Pfeil zu sehen.`,
+                    this.defaultMessageDuration, 
+                    1, 
+                    (shown)=>{
+                        this.message = true
+                    });
+                    
+                    this.messageCount++;
+                    
                 }
                 
 
-                if(!this.message5){
-                    setTimeout(()=> {
-                        this.gameEnvironment.setMessage(`Nur Mut, Commander. Beschleunigen Sie die Rakete, bis der weiße Geschwindigkeitspfeil größer 
-                        als der Richtungspfeil ist`)
-                    },92000);
-                    this.message5 = true;
+                if(this.message && this.messageCount == 4){
+                    this.message = false;
+                    this.gameEnvironment.setMessage(`Nur Mut, Commander. Beschleunigen Sie die Rakete, 
+                    bis der weiße Geschwindigkeitspfeil größer 
+                    als der Richtungspfeil ist`,
+                    this.defaultMessageDuration, 
+                    1, 
+                    (shown)=>{
+                        this.message = true
+                    });
+
+                    this.messageCount++;
                     this.enableSpeedTest = true;
                 }
 
-                if(this.rocket.velocity.length > 10 && !this.message6 && this.enableSpeedTest){
-                        this.gameEnvironment.setMessage(`Krass, Commander. Sie sind richtig schnell. Bremsen Sie mal ab.`)
-                        this.speedTest = true
-                        this.message6 = true; 
-                        
+                if(this.message && this.messageCount == 5 && this.enableSpeedTest && this.rocket.velocity.length > 10 ){ 
+                    this.message = false;
+                    this.gameEnvironment.setMessage(`Krass, Commander. Sie sind richtig schnell. Bremsen Sie mal ab.`,
+                    this.defaultMessageDuration, 
+                    1, (shown)=>{
+                    this.message = true;
+                    })
+                    this.speedTest = true
+                    this.messageCount++ 
                 }
                 
-                if(this.speedTest && this.rocket.velocity.length < 1 && !this.message7){
-                    this.gameEnvironment.setMessage(`Ok, Ok. Sie haben die Rakete im Griff. Zum Glück fliegen wir mit Stadtgas.`)
-                    this.message7 = true;
+                //if(this.speedTest  && !this.message7){
+                if(this.message && this.messageCount == 6 && this.rocket.velocity.length < 1){ 
+                    this.message = false;
+                    this.gameEnvironment.setMessage(`Ok, Ok. Sie haben die Rakete im Griff. Zum Glück fliegen wir nur mit Stadtgas.`,
+                    this.defaultMessageDuration, 
+                    0, 
+                    (shown)=>{
+                        this.message = true;
+                    })
                     this.enableBromberMission = true;  
-                    }
+                    this.messageCount++
+                }
                 
-                if(this.enableBromberMission && !this.message8){
-                    this.gameEnvironment.setMessage(`Wir haben ein Signal erhalten. Ein nahegelegenes Schiff ruft uns. Wollen wir dem Signal folgen?`);
-                    this.message8 = true;
-                    this.gameEnvironment.displayDecisions(["Ja", "Nein"], this);
+                //if(this.enableBromberMission && !this.message8){
+                if(this.messageCount == 7 && this.message){ 
+                    this.message = false;
+                    this.gameEnvironment.setMessage(`Wir haben ein Signal erhalten. 
+                                                        Ein nahegelegenes Schiff ruft uns. 
+                                                        Wollen wir dem Signal folgen?`, 
+                                                        3, 
+                                                        1, 
+                                                        (shown)=>{
+                        
+                        this.message = true;
+                    });
+                    this.gameEnvironment.displayOptions(["Ja", "Nein"], this);
+                    this.gameEnvironment.waitForDecision = true;
+
+                    this.messageCount++
+                    
                 }
 
-                if(this.decision == "Ja" && !this.message8a){
+                if( this.messageCount == 8 && this.message && this.decision == "Ja"){
+                    this.message = false;
                     this.gameEnvironment.setMessage(`Ok, der blaue Pfeil, der die Richtung der Rakete anzeigte, zeigt nun auf das Schiff, 
                                                     das wir erreichen wollen. Je größer der Pfeil, desto näher das Schiff! Auf gehts Commander, 
-                                                    lassen Sie uns das Schiff erreichen!`)
-                    if(this.bromber){
-                    this.selection = this.bromber;
-                    this.message8a = true;
-                    }
-                }
-                if(this.rocket.position.distance(this.bromber!.position) < 100 && !this.bromberActivationSequence){
+                                                    lassen Sie uns das Schiff erreichen!`, 20, 1, (shown)=>{
+                        this.message = true;
+                    })
                     
-                    this.gameEnvironment.setMessage("Commander, wir haben das Schiff gefunden. Es aktiviert seine Systeme!")
-                    this.bromberActivationSequence = true;
+                    if(this.bromber)
+                    this.selection = this.bromber;
+                    this.messageCount++
+                }
+
+                if(this.messageCount==9 && this.message && this.rocket.position.distance(this.bromber!.position) < 100 && !this.bromberActivationSequence){
+                    this.message = false;
+                    this.gameEnvironment.setMessage("Commander, wir haben das Schiff gefunden. Es aktiviert seine Systeme!",15, 1, (shown)=>{
+                        this.message = true
+                    })
+                    
 
                     //Activiere die Systeme des brombers
                     for(let i: number = 0; i<3; i++){
                         setInterval(() => {
                             this.bromber!.rotate(Math.random() * 20 - 10);
-                            if(i > 1)
-                                this.bromber?.accelerate(.3)
+                            
                         },1000 + i*500)
-                        
+                        if(i > 1){
+                            this.bromber!.rotation = .5;
+                            this.bromber?.accelerate(.3)
+                            
+                        }
                     }
+                    
+                    this.messageCount++
                     this.actualTimestamp = performance.now();
+                    
                 }
                 
-                if(this.bromberActivationSequence && !this.message9 && performance.now() > this.actualTimestamp + 20000){
-                    this.gameEnvironment.setMessage("Commander, das Schiff geht auf Kurs. Wir sollten ihm folgen!")
-                    this.bromber!.direction = Vector.betweenPoints(this.bromber!.position, this.godPlanet!.position)
-                    this.enableDogMission = true;
-                }
+                if(this.messageCount == 10 && this.message && performance.now() > this.actualTimestamp + 2000){
+                    this.message = false;
+                    this.gameEnvironment.setMessage("Commander, das Schiff geht auf Kurs. Wir sollten ihm folgen!",15,1, (shown)=>{
+                        this.enableDogMission = true;
+                    })
+                    this.bromber!.direction = Vector.betweenPoints(this.bromber!.position, this.godPlanet!.position).normalize()
+                    this.bromber?.accelerate(1.8);
+                    this.gameEnvironment.setLabel1(`distance to god: ${this.rocket.distance(this.godPlanet!.position)}`)
+                    this.selection = this.godPlanet!;
+                    
+                
 
-                if (this.rocket.distance(this.godPlanet!.position) < 100 && !this.dogProcessRunning && this.enableDogMission){
-                    this.dogProcessRunning = true;
+                    if(this.bromber!.distance(this.godPlanet!.position) < 100 && this.bromber!.scale > .01){
+                        
+                        this.bromber!.setScale(this.bromber!.distance(this.godPlanet!.position)/100 * 0.3)
+                    }
+                        
+                    
+                    this.messageCount++
+                }
+                if (this.messageCount == 11 && this.rocket.distance(this.godPlanet!.position) < 100 ){
+                    this.message = false;
                     this.gameEnvironment.setMessage(`Krass, Commander! Wir stehen hier mitten im Weltraum. Direkt vor uns befindet sich 
-                                                    ein riesiges supermassereiches schwarzes Loch!`)
+                                                    ein riesiges supermassereiches schwarzes Loch!`,20, 1, (shown)=>{
+                        this.message = true
+                        
+                        })
                 
                     //Setze einen Timer, bewege den dog Planet geschmeidig aus dem godPlanet heraus und lass ihn abdriften
                     setTimeout(()=> {
@@ -225,14 +311,18 @@ class SpaceGame {
                         }
             
                     }, 13000); // miliseconds
-                }
-                if(this.dogProcessRunning){ 
+                    this.messageCount++
                     this.actualTimestamp = performance.now();
-
-                    if(performance.now() > this.actualTimestamp + 20000){ 
-                        this.gameEnvironment.setMessage("Da fliegt es hin, das dicke Ei! Wir sollten es zurückholen. Aber wie? Commander. Ich habs. Wir brauchen ein geeignetes Gerät!")
+                }
+                if(this.message == true && this.messageCount == 12){ 
+                    
+                    
+                    if(performance.now() > this.actualTimestamp + 2000){ 
+                        this.gameEnvironment.setMessage("Da fliegt es hin, das dicke Ei! Wir sollten es zurückholen. Aber wie? Commander. Ich habs. Wir brauchen ein geeignetes Gerät!",20, 1, (shown)=>{
+                        
+                        })
                     }
-
+                    
                 }
                 break;
             
@@ -273,14 +363,14 @@ class SpaceGame {
         });
         //this.bromber!.rotationPivot = {x:100, y:100}
 
-        //this.gameEnvironment.setLabel1(`Rocket Position: ${this.rocket.position.x.toFixed(2)}, ${this.rocket.position.y.toFixed(2)}`)
-        this.gameEnvironment.setLabel2(`distance to bromber: ${this.rocket!.position.distance(this.bromber!.position).toFixed(2)}`) //Die Verwendung von Backticks (`) anstelle von einfachen oder doppelten Anführungszeichen ermöglicht die direkte Einfügung von JavaScript-Ausdrücken innerhalb der Zeichenkette. Beide Methoden erreichen dasselbe Ziel, aber der zweite Ausdruck mit Template Literal ist in der Regel leserlicher und einfacher zu handhaben, besonders wenn komplexe Ausdrücke oder mehrere Variablen eingefügt werden müssen. Template Literals bieten auch eine verbesserte Lesbarkeit, da sie mehrzeilige Zeichenketten unterstützen, ohne dass Escape-Zeichen erforderlich sind.
+        //this.gameEnvironment.setLabel1(`Bromber velocity: ${this.bromber!.velocity.length.toFixed(2)}`)
+        //this.gameEnvironment.setLabel2(`Bromber direction length: ${this.bromber!.direction.length.toFixed(2)}`) //Die Verwendung von Backticks (`) anstelle von einfachen oder doppelten Anführungszeichen ermöglicht die direkte Einfügung von JavaScript-Ausdrücken innerhalb der Zeichenkette. Beide Methoden erreichen dasselbe Ziel, aber der zweite Ausdruck mit Template Literal ist in der Regel leserlicher und einfacher zu handhaben, besonders wenn komplexe Ausdrücke oder mehrere Variablen eingefügt werden müssen. Template Literals bieten auch eine verbesserte Lesbarkeit, da sie mehrzeilige Zeichenketten unterstützen, ohne dass Escape-Zeichen erforderlich sind.
         //this.gameEnvironment.setLabel3(`God Pos: ${this.godPlanet!.position.x.toFixed(0)}, ${this.godPlanet!.position.y.toFixed(0)}`)
         this.gameEnvironment.setArrow1(this.rocket.velocity.angle + 90, this.rocket.velocity.length)
         
         if(this.selection == this.rocket){
             this.gameEnvironment.setArrow2(this.selection.direction.angle + 90, 1)
-            this.gameEnvironment.setLabel4(`Bromber Position: ${this.bromber?.position.x}, ${this.bromber?.position.y}`);
+            //this.gameEnvironment.setLabel4(`Bromber Position: ${this.bromber?.position.x}, ${this.bromber?.position.y}`);
         }
         else {// set the scale of the arrow proportional to the distance to the selected object
             arrow2ScaleFactor = 1000 / Vector.betweenPoints(rocketWithPosition.position, selectionWithPosition.position).length //see bulky statement above

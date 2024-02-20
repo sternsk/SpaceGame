@@ -227,6 +227,10 @@ class SpaceObject {
     setRotationPivot({x, y}: {x: number, y: number}){
         this._rotationPivot = {x, y};
     }
+
+    set rotation(p: number){
+        this._rotation= p;
+    }
     
     set velocity(velocity: Vector){
         this._velocity= velocity;

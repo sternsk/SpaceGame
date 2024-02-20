@@ -9,9 +9,12 @@ class GameEnvironment{
     private defsElement: SVGDefsElement;
     private controlElements: HTMLElement[];
     private textBox: HTMLElement;
-    
+
+
+    private messageShowing = false;
     private decisionOptions: HTMLButtonElement[];
     private decision = "";
+    private _waitForDecision = false;
     
     private label1: HTMLElement;
     private label2: HTMLElement;
@@ -29,7 +32,7 @@ class GameEnvironment{
         //initialisiere UserSpace
         this._viewBoxLeft = -500;
         this._viewBoxTop = -500;
-        this._viewBoxWidth = 150;
+        this._viewBoxWidth = 550;
         this._viewBoxHeight = 1; //viewBoxAttribuntes get overriden by svg-Size Attributes
 
         //eine Reihe Kontrollelemte: aktuelle Flüghöhe, aktuelles Energielevel, Mauszeigerposition, aktuelle Masse...
@@ -117,33 +120,36 @@ class GameEnvironment{
         });
     }
 
-    displayDecisions(options: string[], context: SpaceGame){
+    displayOptions(options: string[], context: SpaceGame){
         
         options.forEach(element=>{
             const option = document.createElement("button");
             option.textContent = element;
+            this._waitForDecision = true;
             option.addEventListener("click", () => {
                 // Handle the click event for this option
-                console.log("Clicked option:", element);
                 context.decision = element;
-                
+                this._waitForDecision = false;
+                this.messageShowing = false; // User made a decision, hide the message
+                this.setMessage("", 0, 0, () => {}); // Immediately hide the message
             });                     
             document.getElementById("textBox")?.appendChild(option);
+            
 
         });
     }
-
+/* Kann weg
     handleDecision(context: SpaceGame): boolean{
         
-       
         if(this.decision){
             context.decision = this.decision;
+            
             return true;
         }
         else
             return false;
     }
-
+*/
     getAspectRatio(): number{
         return(this._svgElement.getBBox().width / this._svgElement.getBBox().height);
     }
@@ -178,6 +184,10 @@ class GameEnvironment{
         return this._viewBoxWidth;
     }
 
+    get waitForDecision(): boolean{
+        return this._waitForDecision;
+    }
+
     get keyBoardController(){
         return(this._keyboardController)
     }
@@ -185,6 +195,11 @@ class GameEnvironment{
     set svgElement(svgElem: SVGSVGElement){
         this._svgElement = svgElem;
     }
+
+    set waitForDecision(b: boolean){
+        this._waitForDecision = b
+    }
+    
     
     public setArrow1(direction: number, scale: number){
         this.arrow1.setAttribute(`transform`, `rotate (${direction}), scale (${scale/10})`)
@@ -211,27 +226,34 @@ class GameEnvironment{
     }
 
     
+    //displaying a message duration seconds with delay seconds delay 
 
-    setMessage(message: string){
-        //const textBox = document.getElementById(`textBox`)! //textBox as local variable
-        const messageDuration: number = 20 //seconds
-        let messageShowing;
-        if(!messageShowing){
-            if(this.textBox)   { 
-                this.textBox.innerHTML = message
-                this.textBox.style.display = `block`;
-                messageShowing = true;
-                }
-
-            setTimeout(()=>{
-                if(this.textBox){
-                    this.textBox.style.display = `none`;
-                    messageShowing = false;
-                    
-                }
-            }, messageDuration* 1000)
+    setMessage(message: string, messageDuration: number, delay: number = 1, callback: (shown: boolean)=>void) {
+        if (!this.messageShowing) {
+            // console.log("wait for decision: ", this._waitForDecision);
+        
+            this.textBox.innerHTML = message;
+            setTimeout(() => {
+                
+                this.textBox.style.display = `block`;  
+                
+                
+                setTimeout(() => {
+                    if (this.textBox) {
+                        this.textBox.style.display = `none`;
+                        this.messageShowing = false;
+                        callback(true); // Indicate that the message was shown
+                    }
+                }, messageDuration * 1000);
+            
+            }, delay * 1000);
+    
+            this.messageShowing = true;
+        }else {
+            callback(false); // Indicate that the message was not shown
         }
     }
+    
 
     // Zoome hyperbolisch in einer vorgegebenen Zeit auf eine vorgegebenen Fensterbreite
     // Die Anzahl der zur Verfügung stehenden Frames ergibt sich aus der Zeitvorgabe * der actualFps

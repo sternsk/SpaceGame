@@ -74,6 +74,11 @@ class Vector {
       return this.toPoint().y
     }
 
+    normalize(): Vector{
+      this._length = 1;
+      return(this)
+    }
+
     scale(factor: number): Vector {
         return Vector.fromPoint({x: this.toPoint().x * factor, y: this.toPoint().y * factor});
     }
