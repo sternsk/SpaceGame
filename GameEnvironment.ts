@@ -1,5 +1,6 @@
 class GameEnvironment{
     private _keyboardController: KeyboardController;
+    private _frameRateManager = new FrameRateManager();
     
     private _svgElement: SVGSVGElement;
     private _viewBoxLeft: number;
@@ -32,7 +33,7 @@ class GameEnvironment{
         //initialisiere UserSpace
         this._viewBoxLeft = -500;
         this._viewBoxTop = -500;
-        this._viewBoxWidth = 550;
+        this._viewBoxWidth = 8500;
         this._viewBoxHeight = 1; //viewBoxAttribuntes get overriden by svg-Size Attributes
 
         //eine Reihe Kontrollelemte: aktuelle Flüghöhe, aktuelles Energielevel, Mauszeigerposition, aktuelle Masse...
@@ -102,9 +103,12 @@ class GameEnvironment{
         this._svgElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
         this._svgElement.setAttribute("class", "mainSVG"); //attributes are defined in the style.css //convenient layout properties are defined there
        // this._svgElement.setAttribute("style", "width:100%; height:100%;");
+       
         
         this._svgElement.setAttribute("viewBox", `${this._viewBoxLeft} ${this._viewBoxTop} ${this._viewBoxWidth} ${this._viewBoxHeight}`);
         
+        console.log("svgElementWidth in Constructor of gameEnvironment: ",this._svgElement.getBBox())
+
         this.defsElement = document.createElementNS("http://www.w3.org/2000/svg", "defs");
 
         this._keyboardController = new KeyboardController();
@@ -120,24 +124,7 @@ class GameEnvironment{
         });
     }
 
-    displayOptions(options: string[], context: SpaceGame){
-        
-        options.forEach(element=>{
-            const option = document.createElement("button");
-            option.textContent = element;
-            this._waitForDecision = true;
-            option.addEventListener("click", () => {
-                // Handle the click event for this option
-                context.decision = element;
-                this._waitForDecision = false;
-                this.messageShowing = false; // User made a decision, hide the message
-                this.setMessage("", 0, 0, () => {}); // Immediately hide the message
-            });                     
-            document.getElementById("textBox")?.appendChild(option);
-            
-
-        });
-    }
+    
 /* Kann weg
     handleDecision(context: SpaceGame): boolean{
         
@@ -152,6 +139,10 @@ class GameEnvironment{
 */
     getAspectRatio(): number{
         return(this._svgElement.getBBox().width / this._svgElement.getBBox().height);
+    }
+
+    get frameRateManager(): FrameRateManager{
+        return this._frameRateManager;
     }
 
     get svgElement(){
@@ -228,6 +219,23 @@ class GameEnvironment{
     
     //displaying a message duration seconds with delay seconds delay 
 
+    displayOptions(options: string[], context: SpaceGame){
+        
+        options.forEach(element=>{
+            const option = document.createElement("button");
+            option.textContent = element;
+            this._waitForDecision = true;
+            option.addEventListener("click", () => {
+                // Handle the click event for this option
+                context.decision = element;
+                this._waitForDecision = false;
+                this.messageShowing = false; // User made a decision, hide the message
+               // this.setMessage("", 0, 0, () => {}); // Immediately hide the message
+            });                     
+            document.getElementById("textBox")?.appendChild(option);
+        });
+    }
+
     setMessage(message: string, messageDuration: number, delay: number = 1, callback: (shown: boolean)=>void) {
         if (!this.messageShowing) {
             // console.log("wait for decision: ", this._waitForDecision);
@@ -254,41 +262,107 @@ class GameEnvironment{
         }
     }
     
-
-    // Zoome hyperbolisch in einer vorgegebenen Zeit auf eine vorgegebenen Fensterbreite
-    // Die Anzahl der zur Verfügung stehenden Frames ergibt sich aus der Zeitvorgabe * der actualFps
-
-    windowSmoothly(duration: number, actualFps: number, targetWidth: number, targetCenter:{x: number,y: number}){
+    
+    // Zoome parabolisch in duration sekunden auf targetWidth Fensterbreite
+    // Die Anzahl der zur Verfügung stehenden Frames ergibt sich aus duration * actualFps
+    windowSmoothly(mode: string, duration: number, targetWidth: number, targetCenter:{x: number,y: number}, overheadFactor?: number){
+        //console.log("window smoothly called")
+        //console.log(this._svgElement.getBBox().height)
+        const actualFps = this._frameRateManager.getFPS()
+        
         const aspectRatio = this.getAspectRatio();
+        //console.log("should be 1.3: ",aspectRatio) // should be 1.3
         this._viewBoxHeight = this._viewBoxWidth / aspectRatio; //Clearifying the aspect - viewBoxAttributes apparently get overriden bei svg-Size Attributes 
-        const targetHeight = targetWidth / aspectRatio;         
+        const targetHeight = targetWidth / aspectRatio;      
+        console.log("targetWidth: ", targetWidth, "target Height: ", targetHeight)   
+
+        const targetLeft = targetCenter.x - targetWidth/2
+        const targetTop = targetCenter.y - targetHeight/2
 
         const deltaWidth = targetWidth - this._viewBoxWidth;
         const deltaHeight = targetHeight - this._viewBoxHeight; 
-        const totalFrames = duration * actualFps;
-        const deltaWidthPerFrame = deltaWidth / totalFrames;
-        const deltaHeightPerFrame = deltaHeight / totalFrames;
-        const xTranslationPerFrame = deltaWidthPerFrame * targetWidth / targetCenter.x
-        const yTranslationPerFrame = deltaHeightPerFrame * targetHeight / targetCenter.y
+        console.log("delta tWidth: ", deltaWidth, "delta Height: ", deltaHeight)
+        const deltaXTranslation = targetLeft - this._viewBoxLeft
+        const deltaYTranslation = targetTop - this._viewBoxTop
 
+        const totalFrames = duration * actualFps;
         let frameCount = 0;
-        
-        const animateZoom = () =>{
-            console.log(frameCount)
-            if (frameCount < totalFrames){
+
+        let animateZoom = () =>{}
+
+        console.log("actual fps: ", actualFps)
+        console.log("duration: ", duration)
+        console.log("totalFrames: ", totalFrames)
+        console.log("mode: ", mode)
+        switch(mode){ 
+            case("linear"):
+                const deltaWidthPerFrame = deltaWidth / totalFrames;
+                const deltaHeightPerFrame = deltaHeight / totalFrames;
+                const xTranslationPerFrame = deltaXTranslation / totalFrames
+                const yTranslationPerFrame = deltaYTranslation / totalFrames
+
+                animateZoom = () =>{
+                    if (frameCount < totalFrames){
+                        
+                        this._viewBoxWidth += deltaWidthPerFrame;
+                        this._viewBoxHeight += deltaHeightPerFrame;
+                        this._viewBoxLeft += xTranslationPerFrame;
+                        this._viewBoxTop += yTranslationPerFrame;
+                        this._svgElement.setAttribute("viewBox", `${this._viewBoxLeft} ${this._viewBoxTop} ${this._viewBoxWidth} ${this._viewBoxHeight}`)
+                        frameCount++;
+                    
+                        requestAnimationFrame(animateZoom)
+                    }
+                }
+                animateZoom();
+            break;   
+
+            case (`parabolic`):
+                if(!overheadFactor){
+                    overheadFactor = .8
+                }
+                const viewBoxWidthStart = this._viewBoxWidth
+                console.log("viewBoxWidthStart: ",viewBoxWidthStart)
+                const viewBoxHeightStart = this._viewBoxHeight
+                const viewBoxLeftStart = this._viewBoxLeft
+                const viewBoxTopStart = this._viewBoxTop
                 
-                this._viewBoxWidth += deltaWidthPerFrame;
-                this._viewBoxHeight += deltaHeightPerFrame;
-                this._viewBoxLeft += xTranslationPerFrame;
-                this._viewBoxTop += yTranslationPerFrame;
-                this._svgElement.setAttribute("viewBox", `${this._viewBoxLeft} ${this._viewBoxTop} ${this._viewBoxWidth} ${this._viewBoxHeight}`)
-                frameCount++;
-            
-                requestAnimationFrame(animateZoom)
-            }
-            
+                animateZoom = () =>{
+                    const deltaWidthPerFrame = (-(Math.pow(frameCount/totalFrames, 2) ) + 2 * overheadFactor! * frameCount / totalFrames) /
+                                        ((2 * overheadFactor! - 1) / deltaWidth)
+                    
+                    const deltaHeightPerFrame = (-(Math.pow(frameCount/totalFrames, 2) ) + 2 * overheadFactor! * frameCount / totalFrames) /
+                                        ((2 * overheadFactor! - 1) / deltaHeight)
+
+                    const deltaLeftPerFrame = (-(Math.pow(frameCount/totalFrames, 2) ) + 2 * overheadFactor! * frameCount / totalFrames) /
+                                        ((2 * overheadFactor! - 1) / deltaXTranslation)
+
+                    const deltaTopPerFrame = (-(Math.pow(frameCount/totalFrames, 2) ) + 2 * overheadFactor! * frameCount / totalFrames) /
+                                        ((2 * overheadFactor! - 1) / deltaYTranslation)
+
+                    
+                    console.log("frameCount: ", frameCount)
+                    console.log("deltaWidth: ", deltaWidth)
+                    
+                    if(frameCount < totalFrames){
+                        this._viewBoxWidth = viewBoxWidthStart + deltaWidthPerFrame;
+                        this._viewBoxHeight = viewBoxHeightStart + deltaHeightPerFrame
+                        this._viewBoxLeft = viewBoxLeftStart + deltaLeftPerFrame
+                        this._viewBoxTop = viewBoxTopStart + deltaTopPerFrame
+                        
+                        this._svgElement.setAttribute("viewBox", `${this._viewBoxLeft} ${this._viewBoxTop} ${this._viewBoxWidth} ${this._viewBoxHeight}`)
+                        
+                        frameCount++
+                        requestAnimationFrame(animateZoom)
+                    }
+
+                }
+                animateZoom();
+            break;
         }
-        animateZoom();
+            
+        
+                
         
     }
     

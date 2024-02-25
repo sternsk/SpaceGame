@@ -1,9 +1,9 @@
 class SpaceGame {
     gameEnvironment= new GameEnvironment();
-    frameRateManager = new FrameRateManager();
+    
 
     //allocate controlvariables for possible missions
-    defaultMessageDuration = 2;
+    defaultMessageDuration = 5;
     
     mission: string = "goddog"; //Testmission
     windowing: string = "centered"; //preparing for different screenbehaviour
@@ -90,35 +90,40 @@ class SpaceGame {
             this.objectMap.set("bromber", this.bromber);
             this.objectMap.set(`rokket`, this.rocket)
             }
+            this.windowing = "centered"
     }
 
     private gameLoop(){
         
         requestAnimationFrame(() => this.gameLoop());
-        this.frameRateManager.update(); 
-        //console.log(this.frameRateManager.getFPS())
+        this.gameEnvironment.frameRateManager.update(); 
         
         this.rocket.handleKeyboardInput(this.gameEnvironment.keyBoardController.getKeysPressed())
         
     //  this.background.refresh(this.objectMap);
         this.updateElements();
+       // console.log(this.gameEnvironment.svgElement.getBBox())
+        
         
     //erstelle die Logik der einzelnen Missionen
+        
         switch(this.mission){
             
             case `goddog`:
+                
                 
                 switch(this.windowing){
                     case `centered`:
                     this.gameEnvironment.viewBoxLeft = this.rocket.position.x - this.gameEnvironment.viewBoxWidth/ 2;
                     this.gameEnvironment.viewBoxTop = this.rocket.position.y - this.gameEnvironment.viewBoxHeight/ 2;
+                    //console.log(this.gameEnvironment.viewBoxHeight)
                     break;
                 }
                 
-                
+                //this.gameEnvironment.windowSmoothly(2, 500, this.bromber!.position.toPoint())
                 if(!this.message&&this.messageCount == 0){
-                    //this.gameEnvironment.windowSmoothly(2, this.frameRateManager.getFPS(), 8000, this.rocket.position.toPoint())
-                
+                    this.gameEnvironment.windowSmoothly("linear", 2, 450, this.rocket.position.toPoint())
+                    this.windowing = ""
                     this.gameEnvironment.setMessage(`Ich begrüße Sie herzlich, Commander. Dies ist Ihre Rakete und wir sind Ihre Crew. 
                     Wir begleiten Sie bei Ihrer Reise durch den Raum. 
                     Steuern Sie die Rakete mit den Pfeiltasten.`, this.defaultMessageDuration, 1, (shown) =>{
@@ -131,8 +136,10 @@ class SpaceGame {
                 
                 if(this.message && this.messageCount == 1){
                     
+                    this.windowing = "";
                     this.message = false;
-                    this.gameEnvironment.setMessage(`Am linken Bildschirmrand sehen Sie eine Reihe von Kontrollinstrumenten.`, 
+                    this.gameEnvironment.windowSmoothly("parabolic", 2, 2000, this.godPlanet!.position.toPoint())
+                    this.gameEnvironment.setMessage(`Ihre Aufgabe ist es, diesen Planeten zu reparieren.`, 
                     this.defaultMessageDuration,
                     1,
                     (shown)=>{
@@ -144,8 +151,10 @@ class SpaceGame {
 
                 if(this.message && this.messageCount == 2){
                     this.message = false;
-                    this.gameEnvironment.setMessage(`Damit meine ich nicht die html-Links zu den anderen Seiten dieser websperiments.`,
-                    this.defaultMessageDuration/2, 
+                    this.gameEnvironment.windowSmoothly("parabolic", 2, 1000, this.bromber!.position.toPoint())
+                    
+                    this.gameEnvironment.setMessage(`Dabei wird Ihnen dieses Raumschiff wertvolle Hilfe leisten.`,
+                    this.defaultMessageDuration/3, 
                     undefined, 
                     (shown)=>{
                         this.message = true; 
@@ -156,9 +165,8 @@ class SpaceGame {
                 
                 if(this.message && this.messageCount == 3){
                     this.message = false;
-                    this.gameEnvironment.setMessage(`Der blaue Pfeil zeigt die Richtung der Rakete und der weiße Pfeil die Flugrichtung. 
-                    Die Größe des weißen Pfeils 
-                    zeigt die Geschwindigkeit an. Wenn Sie stehen, ist kein weißer Pfeil zu sehen.`,
+                    this.gameEnvironment.windowSmoothly("parabolic", 2, 3000, this.bromber!.position.toPoint(), .51)
+                    this.gameEnvironment.setMessage(`Diese Zoomfahrt dient eigentlich nur dazu, die Funktion zu testen, die ich eben eingebaut habe...`,
                     this.defaultMessageDuration, 
                     1, 
                     (shown)=>{
@@ -172,6 +180,7 @@ class SpaceGame {
 
                 if(this.message && this.messageCount == 4){
                     this.message = false;
+                    this.gameEnvironment.windowSmoothly("linear", 2, 800, this.rocket.position.toPoint(), .8)
                     this.gameEnvironment.setMessage(`Nur Mut, Commander. Beschleunigen Sie die Rakete, 
                     bis der weiße Geschwindigkeitspfeil größer 
                     als der Richtungspfeil ist`,
@@ -180,7 +189,7 @@ class SpaceGame {
                     (shown)=>{
                         this.message = true
                     });
-
+                    
                     this.messageCount++;
                     this.enableSpeedTest = true;
                 }
@@ -189,9 +198,11 @@ class SpaceGame {
                     this.message = false;
                     this.gameEnvironment.setMessage(`Krass, Commander. Sie sind richtig schnell. Bremsen Sie mal ab.`,
                     this.defaultMessageDuration, 
-                    1, (shown)=>{
+                    0, (shown)=>{
                     this.message = true;
                     })
+                    this.gameEnvironment.windowSmoothly("parabolic", 5, 800, this.rocket.position, .6)
+                    this.windowing = "centered"
                     this.speedTest = true
                     this.messageCount++ 
                 }
@@ -212,15 +223,19 @@ class SpaceGame {
                 //if(this.enableBromberMission && !this.message8){
                 if(this.messageCount == 7 && this.message){ 
                     this.message = false;
+                    this.windowing = ""
                     this.gameEnvironment.setMessage(`Wir haben ein Signal erhalten. 
                                                         Ein nahegelegenes Schiff ruft uns. 
                                                         Wollen wir dem Signal folgen?`, 
-                                                        3, 
+                                                        this.defaultMessageDuration, 
                                                         1, 
                                                         (shown)=>{
                         
                         this.message = true;
                     });
+                    this.gameEnvironment.windowSmoothly("parabolic", 5, this.rocket.distance(this.bromber!.position), 
+                                                        {x: (this.bromber!.position.x - this.rocket.position.x)/2 + this.rocket.position.x, 
+                                                        y: (this.bromber!.position.y - this.rocket.position.y)/2 + this.rocket.position.y})
                     this.gameEnvironment.displayOptions(["Ja", "Nein"], this);
                     this.gameEnvironment.waitForDecision = true;
 
@@ -230,6 +245,8 @@ class SpaceGame {
 
                 if( this.messageCount == 8 && this.message && this.decision == "Ja"){
                     this.message = false;
+                    this.gameEnvironment.windowSmoothly("parabolic", 3, 800, this.rocket.position, 1)
+                    this.windowing = "centered"
                     this.gameEnvironment.setMessage(`Ok, der blaue Pfeil, der die Richtung der Rakete anzeigte, zeigt nun auf das Schiff, 
                                                     das wir erreichen wollen. Je größer der Pfeil, desto näher das Schiff! Auf gehts Commander, 
                                                     lassen Sie uns das Schiff erreichen!`, 20, 1, (shown)=>{
@@ -271,9 +288,12 @@ class SpaceGame {
                     this.gameEnvironment.setMessage("Commander, das Schiff geht auf Kurs. Wir sollten ihm folgen!",15,1, (shown)=>{
                         this.enableDogMission = true;
                     })
+                    this.bromber!.rotation = 0;
                     this.bromber!.direction = Vector.betweenPoints(this.bromber!.position, this.godPlanet!.position).normalize()
                     this.bromber?.accelerate(1.8);
                     this.gameEnvironment.setLabel1(`distance to god: ${this.rocket.distance(this.godPlanet!.position)}`)
+                    this.gameEnvironment.windowSmoothly("parabolic", 2, this.godPlanet!.distance(this.bromber!.position), {x: (this.bromber!.position.x - this.godPlanet!.position.x)/2 +this.godPlanet!.position.x,
+                                                                        y: (this.bromber!.position.y - this.godPlanet!.position.y)/2 +this.godPlanet!.position.y} )
                     this.selection = this.godPlanet!;
                     
                 
@@ -288,6 +308,7 @@ class SpaceGame {
                 }
                 if (this.messageCount == 11 && this.rocket.distance(this.godPlanet!.position) < 100 ){
                     this.message = false;
+                    this.gameEnvironment.windowSmoothly("parabolic", 3, 800, this.godPlanet!.position)
                     this.gameEnvironment.setMessage(`Krass, Commander! Wir stehen hier mitten im Weltraum. Direkt vor uns befindet sich 
                                                     ein riesiges supermassereiches schwarzes Loch!`,20, 1, (shown)=>{
                         this.message = true
@@ -341,7 +362,6 @@ class SpaceGame {
         // insert the gameEnvironment svg to svg Container
         document.getElementById('svgContainer')!.appendChild(this.gameEnvironment.svgElement);
         
-        
         this.gameLoop();
     }
    
@@ -363,8 +383,8 @@ class SpaceGame {
         });
         //this.bromber!.rotationPivot = {x:100, y:100}
 
-        //this.gameEnvironment.setLabel1(`Bromber velocity: ${this.bromber!.velocity.length.toFixed(2)}`)
-        //this.gameEnvironment.setLabel2(`Bromber direction length: ${this.bromber!.direction.length.toFixed(2)}`) //Die Verwendung von Backticks (`) anstelle von einfachen oder doppelten Anführungszeichen ermöglicht die direkte Einfügung von JavaScript-Ausdrücken innerhalb der Zeichenkette. Beide Methoden erreichen dasselbe Ziel, aber der zweite Ausdruck mit Template Literal ist in der Regel leserlicher und einfacher zu handhaben, besonders wenn komplexe Ausdrücke oder mehrere Variablen eingefügt werden müssen. Template Literals bieten auch eine verbesserte Lesbarkeit, da sie mehrzeilige Zeichenketten unterstützen, ohne dass Escape-Zeichen erforderlich sind.
+        this.gameEnvironment.setLabel1(`ViewBoxLeft: ${this.gameEnvironment.viewBoxLeft}, viewBoxTop: ${this.gameEnvironment.viewBoxTop}`)
+        this.gameEnvironment.setLabel2(`ViewBoxWidth: ${this.gameEnvironment.viewBoxWidth}, viewBoxHeight: ${this.gameEnvironment.viewBoxHeight}`) //Die Verwendung von Backticks (`) anstelle von einfachen oder doppelten Anführungszeichen ermöglicht die direkte Einfügung von JavaScript-Ausdrücken innerhalb der Zeichenkette. Beide Methoden erreichen dasselbe Ziel, aber der zweite Ausdruck mit Template Literal ist in der Regel leserlicher und einfacher zu handhaben, besonders wenn komplexe Ausdrücke oder mehrere Variablen eingefügt werden müssen. Template Literals bieten auch eine verbesserte Lesbarkeit, da sie mehrzeilige Zeichenketten unterstützen, ohne dass Escape-Zeichen erforderlich sind.
         //this.gameEnvironment.setLabel3(`God Pos: ${this.godPlanet!.position.x.toFixed(0)}, ${this.godPlanet!.position.y.toFixed(0)}`)
         this.gameEnvironment.setArrow1(this.rocket.velocity.angle + 90, this.rocket.velocity.length)
         
