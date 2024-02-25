@@ -9,6 +9,7 @@ class GameEnvironment{
     private _viewBoxHeight: number;
     private defsElement: SVGDefsElement;
     private controlElements: HTMLElement[];
+    missionSelector: HTMLSelectElement;
     private textBox: HTMLElement;
 
 
@@ -38,6 +39,12 @@ class GameEnvironment{
 
         //eine Reihe Kontrollelemte: aktuelle Flüghöhe, aktuelles Energielevel, Mauszeigerposition, aktuelle Masse...
         this.controlElements = [];
+
+        this.missionSelector = document.createElement("select")
+        const option = document.createElement("option")
+        option.value = "";
+        option.textContent = "choose Mission"
+        this.missionSelector.appendChild(option)
         
         this.label1 = document.createElement("div");
         this.label1.setAttribute('class', 'transformValue')
@@ -82,6 +89,7 @@ class GameEnvironment{
         this.ArrowBox2.setAttribute("height", "100px")
         this.ArrowBox2.setAttribute("fill", "darkblue")
         
+        document.getElementById('controlContainer')!.appendChild(this.missionSelector);
         document.getElementById('controlContainer')!.appendChild(this.label1);
         document.getElementById('controlContainer')!.appendChild(this.label2);
         document.getElementById('controlContainer')!.appendChild(this.label3);
@@ -107,7 +115,7 @@ class GameEnvironment{
         
         this._svgElement.setAttribute("viewBox", `${this._viewBoxLeft} ${this._viewBoxTop} ${this._viewBoxWidth} ${this._viewBoxHeight}`);
         
-        console.log("svgElementWidth in Constructor of gameEnvironment: ",this._svgElement.getBBox())
+        //console.log("svgElementWidth in Constructor of gameEnvironment: ",this._svgElement.getBBox())
 
         this.defsElement = document.createElementNS("http://www.w3.org/2000/svg", "defs");
 
@@ -124,6 +132,12 @@ class GameEnvironment{
         });
     }
 
+    public addOption(element: HTMLSelectElement, value: string){
+        const option = document.createElement("option")
+        option.value = value
+        option.textContent = value
+        element.appendChild(option)
+    }
     
 /* Kann weg
     handleDecision(context: SpaceGame): boolean{
@@ -236,6 +250,29 @@ class GameEnvironment{
         });
     }
 
+    playIntro(spaceGame: SpaceGame){
+        //console.log("playing Intro")
+        if(this.keyBoardController.getKeysPressed()["ArrowUp"]){
+            this._viewBoxWidth += 10
+            this._svgElement.setAttribute(`viewBox`, `${this._viewBoxLeft} ${this._viewBoxTop} ${this._viewBoxWidth} ${this._viewBoxHeight}`)
+            //console.log(this._viewBoxWidth)
+        }
+        if(this.keyBoardController.getKeysPressed()["ArrowDown"]){
+            this._viewBoxWidth -= 10
+            this._svgElement.setAttribute(`viewBox`, `${this._viewBoxLeft} ${this._viewBoxTop} ${this._viewBoxWidth} ${this._viewBoxHeight}`)
+            //console.log(this._viewBoxWidth)
+        }
+    }
+
+    async missionSelection(): Promise<string>{
+        return new Promise<string>((resolve, reject) => {    
+            this.missionSelector.addEventListener(`change`, () =>{
+            
+            resolve(this.missionSelector.value)
+            })
+        })
+    }
+
     setMessage(message: string, messageDuration: number, delay: number = 1, callback: (shown: boolean)=>void) {
         if (!this.messageShowing) {
             // console.log("wait for decision: ", this._waitForDecision);
@@ -274,14 +311,14 @@ class GameEnvironment{
         //console.log("should be 1.3: ",aspectRatio) // should be 1.3
         this._viewBoxHeight = this._viewBoxWidth / aspectRatio; //Clearifying the aspect - viewBoxAttributes apparently get overriden bei svg-Size Attributes 
         const targetHeight = targetWidth / aspectRatio;      
-        console.log("targetWidth: ", targetWidth, "target Height: ", targetHeight)   
+       // console.log("targetWidth: ", targetWidth, "target Height: ", targetHeight)   
 
         const targetLeft = targetCenter.x - targetWidth/2
         const targetTop = targetCenter.y - targetHeight/2
 
         const deltaWidth = targetWidth - this._viewBoxWidth;
         const deltaHeight = targetHeight - this._viewBoxHeight; 
-        console.log("delta tWidth: ", deltaWidth, "delta Height: ", deltaHeight)
+        //console.log("delta tWidth: ", deltaWidth, "delta Height: ", deltaHeight)
         const deltaXTranslation = targetLeft - this._viewBoxLeft
         const deltaYTranslation = targetTop - this._viewBoxTop
 
@@ -290,10 +327,11 @@ class GameEnvironment{
 
         let animateZoom = () =>{}
 
-        console.log("actual fps: ", actualFps)
+        /*console.log("actual fps: ", actualFps)
         console.log("duration: ", duration)
         console.log("totalFrames: ", totalFrames)
         console.log("mode: ", mode)
+        */
         switch(mode){ 
             case("linear"):
                 const deltaWidthPerFrame = deltaWidth / totalFrames;
@@ -322,7 +360,7 @@ class GameEnvironment{
                     overheadFactor = .8
                 }
                 const viewBoxWidthStart = this._viewBoxWidth
-                console.log("viewBoxWidthStart: ",viewBoxWidthStart)
+               // console.log("viewBoxWidthStart: ",viewBoxWidthStart)
                 const viewBoxHeightStart = this._viewBoxHeight
                 const viewBoxLeftStart = this._viewBoxLeft
                 const viewBoxTopStart = this._viewBoxTop
@@ -340,10 +378,10 @@ class GameEnvironment{
                     const deltaTopPerFrame = (-(Math.pow(frameCount/totalFrames, 2) ) + 2 * overheadFactor! * frameCount / totalFrames) /
                                         ((2 * overheadFactor! - 1) / deltaYTranslation)
 
-                    
+                   /* 
                     console.log("frameCount: ", frameCount)
                     console.log("deltaWidth: ", deltaWidth)
-                    
+                    */
                     if(frameCount < totalFrames){
                         this._viewBoxWidth = viewBoxWidthStart + deltaWidthPerFrame;
                         this._viewBoxHeight = viewBoxHeightStart + deltaHeightPerFrame

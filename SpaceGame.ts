@@ -1,24 +1,15 @@
 class SpaceGame {
     gameEnvironment= new GameEnvironment();
     
-
     //allocate controlvariables for possible missions
     defaultMessageDuration = 5;
     
-    mission: string = "goddog"; //Testmission
+    mission: string[] = ["goddog", "behalf"]
+    actualMission: string = ""; //Testmission
     windowing: string = "centered"; //preparing for different screenbehaviour
     dogProcessRunning = false;
+    missionChoosen = false;
     message = false;
-    message1 = false;
-    message2 = false; 
-    message3 = false; 
-    message4 = false; 
-    message5 = false; 
-    message6 = false; 
-    message7 = false; 
-    message8 = false; 
-    message8a = false; 
-    message9 = false; 
     messageCount = 0;
 
     enableSpeedTest = false;
@@ -41,56 +32,69 @@ class SpaceGame {
     //allocate an ObjectMap to store the initialized Objects for rendering
     objectMap = new Map<string, SpaceObject>;
 
-    constructor(mission: string) {
+    constructor() {
         this.rocket = new RainbowRocket();
         this.rocket.position = Vector.fromPoint ({x: 0, y:100})
         this.rocket.direction = Vector.fromPoint({x:1, y:-1})
-        
+        this.objectMap.set(`rokket`, this.rocket)
         this.rocket.setScale(5);
+        
         // set selection = rocket for default
         this.selection = this.rocket;
         
-        //
-        if (mission === "goddog") {             //Initialisierung der Mission "goddog" und den entsprechenden SpaceObjects
-            this.godPlanet = new SpaceObject(
-            Vector.fromPoint({x:-3000,y:500}),          //Position
-            new Vector(0,0),                       //velocity
-            new Vector(1,0),                    //direction
-            .3,                                 //rotation
-            undefined,                          //svgElement
-            "../resources/gravityPlanet07.png" 
-            )
-            
-            this.dogPlanet = new SpaceObject(
-            Vector.fromPoint({x:-3000,y:500}),          //position
-            new Vector(0,0),                       //velocity
-            new Vector(1,0),                    //direction
-            1,                                  //rotation
-            undefined,                          //svgElement
-            "../resources/gravityPlanet06.png"  //image-URI
-            )
-            this.dogPlanet.mass = 20;
-            this.dogPlanet.setScale(0);   
-            
-            //Der soll später Motorradgeräusche machen
-            this.bromber = new SpaceObject(
-                Vector.fromPoint({x: 1000, y:100}),
-                new Vector(0,0),
-                Vector.fromLengthAndAngle(1,0),
-                0,
-                undefined, 
-                "../resources/spacecraft031.png"
-            )
-            this.bromber.setScale(.3)
+        this.mission.forEach((object) =>{
+            this.gameEnvironment.addOption(this.gameEnvironment.missionSelector, object)
+        })
+        this.windowing = "centered"
+    }
 
+    async start() {
+        while (this.actualMission === "") {
+            this.actualMission = await this.gameEnvironment.missionSelection();
+        }
+        
+        switch(this.actualMission){
             
-            //Stelle sicher, dass die SpaceObjects in der richtigen Reihenfolge gerendert werden
-            this.objectMap.set('godPlanet', this.godPlanet);
-            this.objectMap.set("dogPlanet", this.dogPlanet);
-            this.objectMap.set("bromber", this.bromber);
-            this.objectMap.set(`rokket`, this.rocket)
-            }
-            this.windowing = "centered"
+            case`goddog`:
+                this.godPlanet = new SpaceObject(
+                Vector.fromPoint({x:-3000,y:500}),          //Position
+                new Vector(0,0),                       //velocity
+                new Vector(1,0),                    //direction
+                .3,                                 //rotation
+                undefined,                          //svgElement
+                "../resources/gravityPlanet07.png" 
+                )
+                
+                this.dogPlanet = new SpaceObject(
+                Vector.fromPoint({x:-3000,y:500}),          //position
+                new Vector(0,0),                       //velocity
+                new Vector(1,0),                    //direction
+                1,                                  //rotation
+                undefined,                          //svgElement
+                "../resources/gravityPlanet06.png"  //image-URI
+                )
+                this.dogPlanet.mass = 20;
+                this.dogPlanet.setScale(0);   
+                
+                //Der soll später Motorradgeräusche machen
+                this.bromber = new SpaceObject(
+                    Vector.fromPoint({x: 1000, y:100}),
+                    new Vector(0,0),
+                    Vector.fromLengthAndAngle(1,0),
+                    0,
+                    undefined, 
+                    "../resources/spacecraft031.png"
+                )
+                this.bromber.setScale(.3)
+    
+                
+                //Stelle sicher, dass die SpaceObjects in der richtigen Reihenfolge gerendert werden
+                this.objectMap.set('godPlanet', this.godPlanet);
+                this.objectMap.set("dogPlanet", this.dogPlanet);
+                this.objectMap.set("bromber", this.bromber);
+                
+            break; 
+        }
     }
 
     private gameLoop(){
@@ -104,25 +108,28 @@ class SpaceGame {
         this.updateElements();
        // console.log(this.gameEnvironment.svgElement.getBBox())
         
+
+        switch(this.windowing){
+        case `centered`:
+        this.gameEnvironment.viewBoxLeft = this.rocket.position.x - this.gameEnvironment.viewBoxWidth/ 2;
+        this.gameEnvironment.viewBoxTop = this.rocket.position.y - this.gameEnvironment.viewBoxHeight/ 2;
+        //console.log(this.gameEnvironment.viewBoxHeight)
+        break;
+        }
         
     //erstelle die Logik der einzelnen Missionen
         
-        switch(this.mission){
-            
+
+        switch(this.actualMission){
+            case ``:
+                this.gameEnvironment.playIntro(this)
+            break;
+
             case `goddog`:
-                
-                
-                switch(this.windowing){
-                    case `centered`:
-                    this.gameEnvironment.viewBoxLeft = this.rocket.position.x - this.gameEnvironment.viewBoxWidth/ 2;
-                    this.gameEnvironment.viewBoxTop = this.rocket.position.y - this.gameEnvironment.viewBoxHeight/ 2;
-                    //console.log(this.gameEnvironment.viewBoxHeight)
-                    break;
-                }
                 
                 //this.gameEnvironment.windowSmoothly(2, 500, this.bromber!.position.toPoint())
                 if(!this.message&&this.messageCount == 0){
-                    this.gameEnvironment.windowSmoothly("linear", 2, 450, this.rocket.position.toPoint())
+                    this.gameEnvironment.windowSmoothly("linear", 5, 450, this.rocket.position.toPoint())
                     this.windowing = ""
                     this.gameEnvironment.setMessage(`Ich begrüße Sie herzlich, Commander. Dies ist Ihre Rakete und wir sind Ihre Crew. 
                     Wir begleiten Sie bei Ihrer Reise durch den Raum. 
@@ -361,7 +368,7 @@ class SpaceGame {
         });*/
         // insert the gameEnvironment svg to svg Container
         document.getElementById('svgContainer')!.appendChild(this.gameEnvironment.svgElement);
-        
+        this.start();
         this.gameLoop();
     }
    
@@ -373,18 +380,22 @@ class SpaceGame {
 
         let arrow2Direction;
         let arrow2ScaleFactor; 
-
+        
         this.objectMap.forEach((object, key) => {
-           // if(key != "bromber")
-            object.update();
-            if(object.svgElem){
-                this.gameEnvironment.svgElement.appendChild(object.svgElem);
+            if(key != "rokket"){
+                object.update();
+                if(object.svgElem){
+                    this.gameEnvironment.svgElement.appendChild(object.svgElem);
+                }   
             }
         });
+        this.rocket.update()
+        this.gameEnvironment.svgElement.appendChild(this.rocket.svgElem!);
+        
         //this.bromber!.rotationPivot = {x:100, y:100}
 
-        this.gameEnvironment.setLabel1(`ViewBoxLeft: ${this.gameEnvironment.viewBoxLeft}, viewBoxTop: ${this.gameEnvironment.viewBoxTop}`)
-        this.gameEnvironment.setLabel2(`ViewBoxWidth: ${this.gameEnvironment.viewBoxWidth}, viewBoxHeight: ${this.gameEnvironment.viewBoxHeight}`) //Die Verwendung von Backticks (`) anstelle von einfachen oder doppelten Anführungszeichen ermöglicht die direkte Einfügung von JavaScript-Ausdrücken innerhalb der Zeichenkette. Beide Methoden erreichen dasselbe Ziel, aber der zweite Ausdruck mit Template Literal ist in der Regel leserlicher und einfacher zu handhaben, besonders wenn komplexe Ausdrücke oder mehrere Variablen eingefügt werden müssen. Template Literals bieten auch eine verbesserte Lesbarkeit, da sie mehrzeilige Zeichenketten unterstützen, ohne dass Escape-Zeichen erforderlich sind.
+        this.gameEnvironment.setLabel1(`ViewBoxWidth: ${this.gameEnvironment.viewBoxWidth}, viewBoxHeight: ${this.gameEnvironment.viewBoxHeight}`)
+        //this.gameEnvironment.setLabel2(`ViewBoxWidth: ${this.gameEnvironment.viewBoxWidth}, viewBoxHeight: ${this.gameEnvironment.viewBoxHeight}`) //Die Verwendung von Backticks (`) anstelle von einfachen oder doppelten Anführungszeichen ermöglicht die direkte Einfügung von JavaScript-Ausdrücken innerhalb der Zeichenkette. Beide Methoden erreichen dasselbe Ziel, aber der zweite Ausdruck mit Template Literal ist in der Regel leserlicher und einfacher zu handhaben, besonders wenn komplexe Ausdrücke oder mehrere Variablen eingefügt werden müssen. Template Literals bieten auch eine verbesserte Lesbarkeit, da sie mehrzeilige Zeichenketten unterstützen, ohne dass Escape-Zeichen erforderlich sind.
         //this.gameEnvironment.setLabel3(`God Pos: ${this.godPlanet!.position.x.toFixed(0)}, ${this.godPlanet!.position.y.toFixed(0)}`)
         this.gameEnvironment.setArrow1(this.rocket.velocity.angle + 90, this.rocket.velocity.length)
         
@@ -411,7 +422,7 @@ class SpaceGame {
 
 // Initialisiere das Spiel, wenn die Seite geladen ist
 window.onload = () => {
-    const game = new SpaceGame("goddog");
+    const game = new SpaceGame();
     game.init(); // Aufruf der init-Methode, um das Spiel zu starten
 };
 
