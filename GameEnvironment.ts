@@ -3,6 +3,9 @@ class GameEnvironment{
     private _frameRateManager = new FrameRateManager();
     
     private _svgElement: SVGSVGElement;
+
+    private selector = 0;
+    
     private _viewBoxLeft: number;
     private _viewBoxTop: number;
     private _viewBoxWidth: number;
@@ -26,7 +29,8 @@ class GameEnvironment{
     private ArrowBox2: SVGElement;
     private arrow1: SVGElement;
     private arrow2: SVGElement;
-
+    private dummy = new SpaceObject()
+    
     private htmlInputElements: HTMLElement[];
     
 
@@ -34,8 +38,8 @@ class GameEnvironment{
         //initialisiere UserSpace
         this._viewBoxLeft = -500;
         this._viewBoxTop = -500;
-        this._viewBoxWidth = 8500;
-        this._viewBoxHeight = 1; //viewBoxAttribuntes get overriden by svg-Size Attributes
+        this._viewBoxWidth = 4500;
+        this._viewBoxHeight = 3/4 * this._viewBoxWidth; //viewBoxAttribuntes get overriden by svg-Size Attributes in css stylesheet
 
         //eine Reihe Kontrollelemte: aktuelle Flüghöhe, aktuelles Energielevel, Mauszeigerposition, aktuelle Masse...
         this.controlElements = [];
@@ -48,11 +52,11 @@ class GameEnvironment{
         
         this.label1 = document.createElement("div");
         this.label1.setAttribute('class', 'transformValue')
-        this.label1.textContent = "Label 1"; 
+        this.label1.textContent = "Space Patrol!"; 
 
         this.label2 = document.createElement("div");
         this.label2.setAttribute('class', 'transformValue')
-        this.label2.textContent = "Label 2"; 
+        this.label2.textContent = "Choose Your Mission"; 
         
         this.arrow1 = document.createElementNS("http://www.w3.org/2000/svg", "polygon")
         this.arrow1.setAttribute("viewBox", "-50 -50 100 100");
@@ -77,11 +81,11 @@ class GameEnvironment{
         
         this.label3 = document.createElement("div");
         this.label3.setAttribute('class', 'transformValue')
-        this.label3.textContent = "Label 3";
+        this.label3.textContent = "Commander";
         
         this.label4 = document.createElement("div");
         this.label4.setAttribute('class', 'transformValue')
-        this.label4.textContent = "Label 4";
+        this.label4.textContent = "!";
 
         this.ArrowBox2 = document.createElementNS("http://www.w3.org/2000/svg", "svg");
         this.ArrowBox2.setAttribute("style", "position: static;")
@@ -89,9 +93,10 @@ class GameEnvironment{
         this.ArrowBox2.setAttribute("height", "100px")
         this.ArrowBox2.setAttribute("fill", "darkblue")
         
-        document.getElementById('controlContainer')!.appendChild(this.missionSelector);
+        
         document.getElementById('controlContainer')!.appendChild(this.label1);
         document.getElementById('controlContainer')!.appendChild(this.label2);
+        document.getElementById('controlContainer')!.appendChild(this.missionSelector);
         document.getElementById('controlContainer')!.appendChild(this.label3);
         document.getElementById('controlContainer')!.appendChild(this.arrowBox1);
         document.getElementById('controlContainer')!.appendChild(this.label4);
@@ -252,16 +257,44 @@ class GameEnvironment{
 
     playIntro(spaceGame: SpaceGame){
         //console.log("playing Intro")
-        if(this.keyBoardController.getKeysPressed()["ArrowUp"]){
+        
+        let keysPressed = this.keyBoardController.getKeysPressed()
+        const svgElements = spaceGame.rocket.svgElem!
+        svgElements.push(spaceGame.rocket.gElem!)
+        let selectedPart: SVGElement = svgElements[this.selector];
+        console.log(this.selector)
+        
+        
+        if(keysPressed["ArrowUp"]){
             this._viewBoxWidth += 10
+            this._viewBoxHeight = this._viewBoxWidth/4*3
             this._svgElement.setAttribute(`viewBox`, `${this._viewBoxLeft} ${this._viewBoxTop} ${this._viewBoxWidth} ${this._viewBoxHeight}`)
             //console.log(this._viewBoxWidth)
         }
-        if(this.keyBoardController.getKeysPressed()["ArrowDown"]){
+        if(keysPressed["ArrowDown"]){
             this._viewBoxWidth -= 10
+            if(this._viewBoxWidth<0)
+                this._viewBoxWidth = 0
+            this._viewBoxHeight = this._viewBoxWidth/4*3
             this._svgElement.setAttribute(`viewBox`, `${this._viewBoxLeft} ${this._viewBoxTop} ${this._viewBoxWidth} ${this._viewBoxHeight}`)
             //console.log(this._viewBoxWidth)
         }
+        if(keysPressed["ArrowLeft"])
+            selectedPart.removeAttribute("stroke")
+            selectedPart.removeAttribute("stroke-width")
+            this.selector++
+            selectedPart = svgElements![this.selector]
+
+        if(keysPressed["ArrowRight"])
+            this.selector--
+            selectedPart = svgElements![this.selector]
+
+        if(keysPressed[" "]){}
+            //spaceGame.rocket.animateSummitBall()
+        if(this.selector < -1)
+            this.selector = svgElements!.length - 1
+        if(this.selector > svgElements!.length - 1)
+            this.selector = -1
     }
 
     async missionSelection(): Promise<string>{
@@ -303,7 +336,7 @@ class GameEnvironment{
     // Zoome parabolisch in duration sekunden auf targetWidth Fensterbreite
     // Die Anzahl der zur Verfügung stehenden Frames ergibt sich aus duration * actualFps
     windowSmoothly(mode: string, duration: number, targetWidth: number, targetCenter:{x: number,y: number}, overheadFactor?: number){
-        //console.log("window smoothly called")
+        console.log("window smoothly called")
         //console.log(this._svgElement.getBBox().height)
         const actualFps = this._frameRateManager.getFPS()
         
@@ -387,6 +420,12 @@ class GameEnvironment{
                         this._viewBoxHeight = viewBoxHeightStart + deltaHeightPerFrame
                         this._viewBoxLeft = viewBoxLeftStart + deltaLeftPerFrame
                         this._viewBoxTop = viewBoxTopStart + deltaTopPerFrame
+
+                        if(this._viewBoxWidth < 0)
+                            this._viewBoxWidth = 0;
+                    
+                        if(this._viewBoxHeight < 0)
+                            this._viewBoxHeight = 0;
                         
                         this._svgElement.setAttribute("viewBox", `${this._viewBoxLeft} ${this._viewBoxTop} ${this._viewBoxWidth} ${this._viewBoxHeight}`)
                         

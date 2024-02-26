@@ -8,6 +8,8 @@ class SpaceObject {
     protected _mass?: number; 
     
     protected gElement?: SVGGElement | null;
+    protected _defsElement?: SVGDefsElement[];
+    protected _svgElement?: SVGElement[];
     protected _rotationPivot: {x: number, y:number} = {x:0, y:0};
 
     protected _image?: SVGImageElement;  // Falls ein Image eingefügt wird
@@ -109,6 +111,9 @@ class SpaceObject {
         return distanceVector.length;
     }
 
+    get defsElem(): SVGDefsElement[] | undefined{
+        return this._defsElement;
+    }
     get direction(): Vector{
         return this._direction;
     }
@@ -145,13 +150,18 @@ class SpaceObject {
     }
 
     // Getter-Methode, um die SVG-Elemente zu erhalten
-    get svgElem(): SVGGElement | null {
+    get gElem(): SVGGElement | null {
         if (this.gElement){
          return this.gElement;
         }
         else return null;
-        
     }    
+
+    get svgElem(): SVGElement[] | null{
+        if(this._svgElement)
+            return this._svgElement
+        else return null;
+    }
     
     // Behandeln von Keyboard-Eingaben in SpaceObjects
     handleKeyboardInput(keysPressed: {[key: string]: boolean}) {

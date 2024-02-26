@@ -9,8 +9,11 @@ class SpaceGame {
     windowing: string = "centered"; //preparing for different screenbehaviour
     dogProcessRunning = false;
     missionChoosen = false;
+    started = false
+    rocketAppeared = false
     message = false;
     messageCount = 0;
+    dummy = new SpaceObject()
 
     enableSpeedTest = false;
     speedTest = false; 
@@ -38,6 +41,8 @@ class SpaceGame {
         this.rocket.direction = Vector.fromPoint({x:1, y:-1})
         this.objectMap.set(`rokket`, this.rocket)
         this.rocket.setScale(5);
+
+        
         
         // set selection = rocket for default
         this.selection = this.rocket;
@@ -52,7 +57,7 @@ class SpaceGame {
         while (this.actualMission === "") {
             this.actualMission = await this.gameEnvironment.missionSelection();
         }
-        
+
         switch(this.actualMission){
             
             case`goddog`:
@@ -93,6 +98,7 @@ class SpaceGame {
                 this.objectMap.set("dogPlanet", this.dogPlanet);
                 this.objectMap.set("bromber", this.bromber);
                 
+                
             break; 
         }
     }
@@ -102,6 +108,7 @@ class SpaceGame {
         requestAnimationFrame(() => this.gameLoop());
         this.gameEnvironment.frameRateManager.update(); 
         
+        if(this.actualMission)
         this.rocket.handleKeyboardInput(this.gameEnvironment.keyBoardController.getKeysPressed())
         
     //  this.background.refresh(this.objectMap);
@@ -110,11 +117,11 @@ class SpaceGame {
         
 
         switch(this.windowing){
-        case `centered`:
-        this.gameEnvironment.viewBoxLeft = this.rocket.position.x - this.gameEnvironment.viewBoxWidth/ 2;
-        this.gameEnvironment.viewBoxTop = this.rocket.position.y - this.gameEnvironment.viewBoxHeight/ 2;
-        //console.log(this.gameEnvironment.viewBoxHeight)
-        break;
+            case `centered`:
+            this.gameEnvironment.viewBoxLeft = this.rocket.position.x - this.gameEnvironment.viewBoxWidth/ 2;
+            this.gameEnvironment.viewBoxTop = this.rocket.position.y - this.gameEnvironment.viewBoxHeight/ 2;
+            //console.log(this.gameEnvironment.viewBoxHeight)
+            break;
         }
         
     //erstelle die Logik der einzelnen Missionen
@@ -122,6 +129,24 @@ class SpaceGame {
 
         switch(this.actualMission){
             case ``:
+                if(!this.started){
+                    this.gameEnvironment.windowSmoothly("parabolic", 10, 400, this.rocket.position, .8)
+                    
+                }
+                
+                this.gameEnvironment.setArrow2(this.dummy.direction.angle,1)
+                this.dummy.rotation += 1;
+                this.dummy.update()
+                
+                console.log(this.dummy.rotation)
+                
+                if(!this.rocketAppeared)
+                this.rocket.rotation += .01
+                this.started = true;
+                setTimeout(()=>{
+                    this.rocket.rotation = 0
+                    this.rocketAppeared = true
+                }, 8000)
                 this.gameEnvironment.playIntro(this)
             break;
 
@@ -172,8 +197,8 @@ class SpaceGame {
                 
                 if(this.message && this.messageCount == 3){
                     this.message = false;
-                    this.gameEnvironment.windowSmoothly("parabolic", 2, 3000, this.bromber!.position.toPoint(), .51)
-                    this.gameEnvironment.setMessage(`Diese Zoomfahrt dient eigentlich nur dazu, die Funktion zu testen, die ich eben eingebaut habe...`,
+                    this.gameEnvironment.windowSmoothly("parabolic", 2, 3000, this.bromber!.position.toPoint(), .8)
+                    this.gameEnvironment.setMessage(`In dieser Umgebung werden Sie die Rakete steuern...`,
                     this.defaultMessageDuration, 
                     1, 
                     (shown)=>{
@@ -384,26 +409,35 @@ class SpaceGame {
         this.objectMap.forEach((object, key) => {
             if(key != "rokket"){
                 object.update();
-                if(object.svgElem){
-                    this.gameEnvironment.svgElement.appendChild(object.svgElem);
-                }   
+                if(object.defsElem)
+                    for( let i = 0; i < object.defsElem?.length; i++)
+                        this.gameEnvironment.svgElement.appendChild(object.defsElem[i])
+                if(object.gElem)
+                    this.gameEnvironment.svgElement.appendChild(object.gElem);
+                  
             }
+            
         });
         this.rocket.update()
-        this.gameEnvironment.svgElement.appendChild(this.rocket.svgElem!);
+        if(this.rocket.defsElem)
+                    for( let i = 0; i < this.rocket.defsElem?.length; i++)
+                        this.gameEnvironment.svgElement.appendChild(this.rocket.defsElem[i])
+                
+        this.gameEnvironment.svgElement.appendChild(this.rocket.gElem!);
         
         //this.bromber!.rotationPivot = {x:100, y:100}
 
-        this.gameEnvironment.setLabel1(`ViewBoxWidth: ${this.gameEnvironment.viewBoxWidth}, viewBoxHeight: ${this.gameEnvironment.viewBoxHeight}`)
+        //this.gameEnvironment.setLabel1(`ViewBoxWidth: ${this.gameEnvironment.viewBoxWidth}, viewBoxHeight: ${this.gameEnvironment.viewBoxHeight}`)
         //this.gameEnvironment.setLabel2(`ViewBoxWidth: ${this.gameEnvironment.viewBoxWidth}, viewBoxHeight: ${this.gameEnvironment.viewBoxHeight}`) //Die Verwendung von Backticks (`) anstelle von einfachen oder doppelten Anführungszeichen ermöglicht die direkte Einfügung von JavaScript-Ausdrücken innerhalb der Zeichenkette. Beide Methoden erreichen dasselbe Ziel, aber der zweite Ausdruck mit Template Literal ist in der Regel leserlicher und einfacher zu handhaben, besonders wenn komplexe Ausdrücke oder mehrere Variablen eingefügt werden müssen. Template Literals bieten auch eine verbesserte Lesbarkeit, da sie mehrzeilige Zeichenketten unterstützen, ohne dass Escape-Zeichen erforderlich sind.
         //this.gameEnvironment.setLabel3(`God Pos: ${this.godPlanet!.position.x.toFixed(0)}, ${this.godPlanet!.position.y.toFixed(0)}`)
+        
         this.gameEnvironment.setArrow1(this.rocket.velocity.angle + 90, this.rocket.velocity.length)
         
-        if(this.selection == this.rocket){
+        if(this.selection == this.rocket && this.actualMission){
             this.gameEnvironment.setArrow2(this.selection.direction.angle + 90, 1)
             //this.gameEnvironment.setLabel4(`Bromber Position: ${this.bromber?.position.x}, ${this.bromber?.position.y}`);
         }
-        else {// set the scale of the arrow proportional to the distance to the selected object
+        else if(this.actualMission){// set the scale of the arrow proportional to the distance to the selected object
             arrow2ScaleFactor = 1000 / Vector.betweenPoints(rocketWithPosition.position, selectionWithPosition.position).length //see bulky statement above
             // range maxScaleFActor and minScaleFactor between some Values
             if(arrow2ScaleFactor <.2)

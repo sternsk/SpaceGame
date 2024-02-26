@@ -1,8 +1,9 @@
 class RainbowRocket extends SpaceObject {
-    private gradients: SVGDefsElement[];
     
     private svgNS = "http://www.w3.org/2000/svg";
-
+    private wingLeft: SVGPathElement = document.createElementNS(this.svgNS, "path") as SVGPathElement;
+    private wingRight: SVGPathElement = document.createElementNS(this.svgNS, "path") as SVGPathElement;
+    
     // Constructor overload without parameters
     constructor();
 
@@ -30,25 +31,26 @@ class RainbowRocket extends SpaceObject {
         
         // Additional initialization specific to RainbowRocket
         this.gElement = this.createRocketSvg();
-        this.gradients = this.createRainbowRocketGradients();
+        this._defsElement = this.createRainbowRocketdefsElement();
+        this._svgElement = [];
     }
 
 
 
    
-   //Die folgenden Funktionen habe ich dem Contructor von GameEnvironment entnommen
-    private createRainbowRocketGradients(): SVGDefsElement[]{
-        this.gradients = [];
-        //erstelle drei linearGradients
-        const numberOfGradients = 3;
+   //Die folgenden Funktionen habe ich dem Constructor von GameEnvironment entnommen
+    private createRainbowRocketdefsElement(): SVGDefsElement[] | undefined{
+        //erstelle drei lineardefsElement
+        const numberOfdefsElement = 3;
         const linearGradient: SVGLinearGradientElement[] = [];
-    
-        for (let i=0; i<numberOfGradients; i++){
+        
+        // erzeuge numberOfDefsElements linearGradients
+        for (let i=0; i<numberOfdefsElement; i++){
             const gradient = document.createElementNS("http://www.w3.org/2000/svg", "linearGradient");
             linearGradient.push(gradient);
         }
 
-        // erstelle einen zweidimensionalen Array von stops für die Gradients
+        // erstelle einen zweidimensionalen Array von stops für die defsElemente
         const stop: SVGStopElement[][] = [
             [
                 this.createStop("0%", "stop-color:#5b79a8"), 
@@ -70,7 +72,7 @@ class RainbowRocket extends SpaceObject {
             ]
         ];
 
-        //füge dem ersten drei stops, dem zweiten 6 stops und dem dritten drei stops hinzu
+        //füge dem ersten defsElement drei stops, dem zweiten 6 stops und dem dritten drei stops hinzu
         const stopAmounts = [3,6,3];
         for (let i=0; i<stopAmounts.length; i++){
             
@@ -78,7 +80,7 @@ class RainbowRocket extends SpaceObject {
                 linearGradient[i].appendChild(stop[i][j] )
             }
         }
-        return this.gradients;
+        return this._defsElement;
 
     } 
     private createRocketSvg(): SVGGElement {
@@ -87,64 +89,72 @@ class RainbowRocket extends SpaceObject {
         const g = document.createElementNS(this.svgNS, "g") as unknown as SVGGElement;
         g.setAttribute("fill", "url(#gradient1)");
         
-        const wingLeft = document.createElementNS(this.svgNS, "path");
-        wingLeft.setAttribute("id", "wingLeft");
-        wingLeft.setAttribute("d", "M-2 -3 q-1.5 1, -2 3 q1 -0.5, 2 -1z");
-        wingLeft.setAttribute("fill", "darkslateblue");
-        g.appendChild(wingLeft);
+        
+        this.wingLeft.setAttribute("id", "wingLeft");
+        this.wingLeft.setAttribute("d", "M-2 -3 q-1.5 1, -2 3 q1 -0.5, 2 -1z");
+        this.wingLeft.setAttribute("fill", "darkslateblue");
+        this._svgElement?.push(this.wingLeft)
+        g.appendChild(this.wingLeft);
         
 
-        const wingRight = document.createElementNS(this.svgNS, "path");
-        wingRight.setAttribute("id", "wingRight");
-        wingRight.setAttribute("d", "M 2 -3 q1.5 1 ,2 3 q-1 -0.5, -2 -1z");
-        wingRight.setAttribute("fill", "darkslateblue");
-        g.appendChild(wingRight);
+        
+        this.wingRight.setAttribute("id", "wingRight");
+        this.wingRight.setAttribute("d", "M 2 -3 q1.5 1 ,2 3 q-1 -0.5, -2 -1z");
+        this.wingRight.setAttribute("fill", "darkslateblue");
+        this._svgElement?.push(this.wingRight)
+        g.appendChild(this.wingRight);
 
-        const fire = document.createElementNS(this.svgNS, "path");
+        const fire = document.createElementNS(this.svgNS, "path") as SVGPathElement;
         fire.setAttribute("id", "fire");
         fire.setAttribute("d", "M -2 2 q -1 3,  0 6 q 1 -1, 1 -2 q 0 1.5, 1 3 q 1 -1.5, 1 -3 q 0 1, 1 2 q 1 -3,  0 -6 q -2 -0.5, -4 0 ");
         fire.setAttribute("stroke-width", ".1px");
         fire.setAttribute("stroke", "black");
         fire.setAttribute("vector-effect", "non-scaling-stroke");
+        this._svgElement?.push(fire)
         g.appendChild(fire);
 
-        const innerfire = document.createElementNS(this.svgNS, "path");
+        const innerfire = document.createElementNS(this.svgNS, "path") as SVGPathElement;
         innerfire.setAttribute("id", "innerfire");
         innerfire.setAttribute("d", "M-1 1.5 q -.5 1 , 0 3 q .5 0, 1 -1.5 q .5 1, 1 1.5 q .5 -1, 0 -3");
         innerfire.setAttribute("fill", "orange");
+        this._svgElement?.push(innerfire)
         g.appendChild(innerfire);
 
-        const body = document.createElementNS(this.svgNS, "path");
+        const body = document.createElementNS(this.svgNS, "path") as SVGPathElement;
         body.setAttribute("id", "body");
         body.setAttribute("d", "M-2-4 q-1 3,  0 6 q 2 -.5, 4 0 q 1 -3,  0 -6 q -2 -0.5, -4 0 ");
         body.setAttribute("stroke", "black");
         body.setAttribute("stroke-width", ".1px");
         body.setAttribute("fill", "grey");
         body.setAttribute("vector-effect", "non-scaling-stroke");
+        this._svgElement?.push(body)
         g.appendChild(body);
 
-        const top = document.createElementNS(this.svgNS, "path");
+        const top = document.createElementNS(this.svgNS, "path") as SVGPathElement;
         top.setAttribute("id", "top");
         top.setAttribute("d", "M -2 -4 q .5 -2, 2 -4 q 1.5 2, 2 4 q-2 -0.5, -4 0");
         top.setAttribute("stroke", "black");
         top.setAttribute("stroke-width", ".1px");
         top.setAttribute("fill", "darkgrey");
         top.setAttribute("vector-effect", "non-scaling-stroke");
+        this._svgElement?.push(top)
         g.appendChild(top);
 
-        const topwindow = document.createElementNS(this.svgNS, "path");
+        const topwindow = document.createElementNS(this.svgNS, "path") as SVGPathElement;
         topwindow.setAttribute("id", "topwindow");
         topwindow.setAttribute("d", "M -1 -5 q .75 -.75, 1 -1 q .75 .75, 1 1 q -1 -.25, -2 0");
         topwindow.setAttribute("fill", "darkslateblue");
+        this._svgElement?.push(topwindow)
         g.appendChild(topwindow);
 
-        const middlewindow = document.createElementNS(this.svgNS, "path");
+        const middlewindow = document.createElementNS(this.svgNS, "path") as SVGPathElement;
         middlewindow.setAttribute("id", "middlewindow");
         middlewindow.setAttribute("d", "M-1 -3 q -.5 2, 0 4 q .5 .15, 1 0 q -.5 -2, 0 -4 q -.5 -.15, -1 0");
         middlewindow.setAttribute("fill", "darkslateblue");
+        this._svgElement?.push(middlewindow)
         g.appendChild(middlewindow);
 
-        const summit = document.createElementNS(this.svgNS, "line");
+        const summit = document.createElementNS(this.svgNS, "line") as SVGPathElement;
         summit.setAttribute("id", "summit");
         summit.setAttribute("x1", "0");
         summit.setAttribute("y1", "-8");
@@ -152,13 +162,15 @@ class RainbowRocket extends SpaceObject {
         summit.setAttribute("y2", "-10");
         summit.setAttribute("stroke", "black");
         summit.setAttribute("stroke-width", ".1");
+        this._svgElement?.push(summit)
         g.appendChild(summit);
 
-        const summitball = document.createElementNS(this.svgNS, "circle");
+        const summitball = document.createElementNS(this.svgNS, "circle") as SVGPathElement;
         summitball.setAttribute("cx", "0");
         summitball.setAttribute("cy", "-10");
         summitball.setAttribute("r", ".2");
         summitball.setAttribute("fill", "orange");
+        this._svgElement?.push(summitball)
         g.appendChild(summitball);
         return g;
     }
