@@ -30,9 +30,12 @@ class RainbowRocket extends SpaceObject {
         super(position, velocity, direction, rotation, gElement, imageUrl);
         
         // Additional initialization specific to RainbowRocket
+        this._svgElement = [];
         this.gElement = this.createRocketSvg();
         this._defsElement = this.createRainbowRocketdefsElement();
-        this._svgElement = [];
+        
+        this._svgElement.push(this.gElement)
+        console.log(this._svgElement.length.toString())
     }
 
 
@@ -94,10 +97,10 @@ class RainbowRocket extends SpaceObject {
         this.wingLeft.setAttribute("d", "M-2 -3 q-1.5 1, -2 3 q1 -0.5, 2 -1z");
         this.wingLeft.setAttribute("fill", "darkslateblue");
         this._svgElement?.push(this.wingLeft)
+
         g.appendChild(this.wingLeft);
         
 
-        
         this.wingRight.setAttribute("id", "wingRight");
         this.wingRight.setAttribute("d", "M 2 -3 q1.5 1 ,2 3 q-1 -0.5, -2 -1z");
         this.wingRight.setAttribute("fill", "darkslateblue");
@@ -163,6 +166,7 @@ class RainbowRocket extends SpaceObject {
         summit.setAttribute("stroke", "black");
         summit.setAttribute("stroke-width", ".1");
         this._svgElement?.push(summit)
+        console.log(this._svgElement?.length.toString())
         g.appendChild(summit);
 
         const summitball = document.createElementNS(this.svgNS, "circle") as SVGPathElement;
@@ -172,6 +176,7 @@ class RainbowRocket extends SpaceObject {
         summitball.setAttribute("fill", "orange");
         this._svgElement?.push(summitball)
         g.appendChild(summitball);
+        console.log(this._svgElement?.length.toString())
         return g;
     }
     private createStop(offset: string, stopColor: string, stopOpacity?: string): SVGStopElement {

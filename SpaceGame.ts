@@ -138,8 +138,6 @@ class SpaceGame {
                 this.dummy.rotation += 1;
                 this.dummy.update()
                 
-                console.log(this.dummy.rotation)
-                
                 if(!this.rocketAppeared)
                 this.rocket.rotation += .01
                 this.started = true;
@@ -147,7 +145,10 @@ class SpaceGame {
                     this.rocket.rotation = 0
                     this.rocketAppeared = true
                 }, 8000)
-                this.gameEnvironment.playIntro(this)
+                if(this.rocket.svgElem){ 
+                    this.gameEnvironment.setLabel2(this.rocket.svgElem.length.toString())
+                    this.gameEnvironment.playIntro(this.rocket.svgElem)
+                }
             break;
 
             case `goddog`:

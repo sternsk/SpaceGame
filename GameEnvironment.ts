@@ -255,15 +255,20 @@ class GameEnvironment{
         });
     }
 
-    playIntro(spaceGame: SpaceGame){
+    playIntro(svgElements: SVGElement[]){
         //console.log("playing Intro")
         
         let keysPressed = this.keyBoardController.getKeysPressed()
-        const svgElements = spaceGame.rocket.svgElem!
-        svgElements.push(spaceGame.rocket.gElem!)
-        let selectedPart: SVGElement = svgElements[this.selector];
-        console.log(this.selector)
         
+        
+        //svgElements.push(spaceGame.rocket.gElem!)
+        let selectedPart: SVGElement = svgElements[this.selector];
+        //console.log(this.selector)
+        this.setLabel3("svgElements.length: "+ svgElements.length)
+        this.setLabel4(this.selector.toString())
+        
+        svgElements[0].setAttribute("stroke", "black")
+        svgElements[0].setAttribute("stroke-width", "1")
         
         if(keysPressed["ArrowUp"]){
             this._viewBoxWidth += 10
@@ -279,17 +284,19 @@ class GameEnvironment{
             this._svgElement.setAttribute(`viewBox`, `${this._viewBoxLeft} ${this._viewBoxTop} ${this._viewBoxWidth} ${this._viewBoxHeight}`)
             //console.log(this._viewBoxWidth)
         }
-        if(keysPressed["ArrowLeft"])
+        if(keysPressed["ArrowLeft"]){ 
             selectedPart.removeAttribute("stroke")
             selectedPart.removeAttribute("stroke-width")
             this.selector++
             selectedPart = svgElements![this.selector]
+        }
 
-        if(keysPressed["ArrowRight"])
+        if(keysPressed["ArrowRight"]){ 
             this.selector--
             selectedPart = svgElements![this.selector]
+        }
 
-        if(keysPressed[" "]){}
+        if(keysPressed[" "])
             //spaceGame.rocket.animateSummitBall()
         if(this.selector < -1)
             this.selector = svgElements!.length - 1
