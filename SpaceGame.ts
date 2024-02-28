@@ -108,7 +108,7 @@ class SpaceGame {
         requestAnimationFrame(() => this.gameLoop());
         this.gameEnvironment.frameRateManager.update(); 
         
-        if(this.actualMission)
+        //if(this.actualMission)
         this.rocket.handleKeyboardInput(this.gameEnvironment.keyBoardController.getKeysPressed())
         
     //  this.background.refresh(this.objectMap);
@@ -131,18 +131,19 @@ class SpaceGame {
             case ``:
                 if(!this.started){
                     this.gameEnvironment.windowSmoothly("parabolic", 10, 400, this.rocket.position, .8)
-                    
                 }
                 
                 this.gameEnvironment.setArrow2(this.dummy.direction.angle,1)
                 this.dummy.rotation += 1;
                 this.dummy.update()
+
+                this.gameEnvironment.drawBackground("grid")
                 
                 if(!this.rocketAppeared)
-                this.rocket.rotation += .01
+                    this.rocket.rotation += .01
                 this.started = true;
                 setTimeout(()=>{
-                    this.rocket.rotation = 0
+                    this.rocket.rotation = .5
                     this.rocketAppeared = true
                 }, 8000)
                 if(this.rocket.svgElem){ 
@@ -152,7 +153,7 @@ class SpaceGame {
             break;
 
             case `goddog`:
-                
+                this.rocket.rotation = 0
                 //this.gameEnvironment.windowSmoothly(2, 500, this.bromber!.position.toPoint())
                 if(!this.message&&this.messageCount == 0){
                     this.gameEnvironment.windowSmoothly("linear", 5, 450, this.rocket.position.toPoint())

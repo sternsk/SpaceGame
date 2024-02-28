@@ -4,7 +4,8 @@ class GameEnvironment{
     
     private _svgElement: SVGSVGElement;
 
-    private selector = 0;
+   // private selector: number[] = [];
+    readyForAChange: boolean = true;
     
     private _viewBoxLeft: number;
     private _viewBoxTop: number;
@@ -259,16 +260,53 @@ class GameEnvironment{
         //console.log("playing Intro")
         
         let keysPressed = this.keyBoardController.getKeysPressed()
+        let repeat: boolean
+        let selector: number[]
+        let candidat: number
         
+        if(this.readyForAChange){ 
+            this.readyForAChange = false
+            selector = []
+            // add up to svgElements.length random numbers to selector[] // handle zero separately, its the whole bunch //try not to repeat the numbers!
+            if(Math.random()*3 < 1){ 
+                for(let i = 0; i < Math.ceil(Math.random() * svgElements.length); i++){
+                    repeat = true;
+                        while(repeat){ 
+                            candidat = Math.ceil(Math.random()  * (svgElements.length -1))
+                            if(selector.indexOf(candidat) === -1){ 
+                                selector.push(candidat)
+                                //console.log(candidat)
+                                repeat = false
+                            }
+                        }
+                }
+            }else{
+                selector.push(0)
+            }
+            for(let i = 0; i<svgElements.length; i++){
+                svgElements[i].removeAttribute("stroke")
+                svgElements[i].removeAttribute("stroke-width")
+                console.log("removed from part "+i)
+                
+            }
+
+            for(let i = 0; i < selector.length; i++){
+                svgElements[selector[i]].setAttribute("stroke", "brown")
+                svgElements[selector[i]].setAttribute("Stroke-width", ".2")
+                console.log("added to part "+i)
+            }
+
         
-        //svgElements.push(spaceGame.rocket.gElem!)
-        let selectedPart: SVGElement = svgElements[this.selector];
+            setTimeout(()=>{
+                this.readyForAChange = true
+                console.log(selector)
+            }, 2000)
+        }
+
         //console.log(this.selector)
         this.setLabel3("svgElements.length: "+ svgElements.length)
-        this.setLabel4(this.selector.toString())
         
-        svgElements[0].setAttribute("stroke", "black")
-        svgElements[0].setAttribute("stroke-width", "1")
+        
         
         if(keysPressed["ArrowUp"]){
             this._viewBoxWidth += 10
@@ -285,29 +323,21 @@ class GameEnvironment{
             //console.log(this._viewBoxWidth)
         }
         if(keysPressed["ArrowLeft"]){ 
-            selectedPart.removeAttribute("stroke")
-            selectedPart.removeAttribute("stroke-width")
-            this.selector++
-            selectedPart = svgElements![this.selector]
+            
         }
 
         if(keysPressed["ArrowRight"]){ 
-            this.selector--
-            selectedPart = svgElements![this.selector]
+            
         }
 
-        if(keysPressed[" "])
+        if(keysPressed[" "]){}
             //spaceGame.rocket.animateSummitBall()
-        if(this.selector < -1)
-            this.selector = svgElements!.length - 1
-        if(this.selector > svgElements!.length - 1)
-            this.selector = -1
+        
     }
 
     async missionSelection(): Promise<string>{
         return new Promise<string>((resolve, reject) => {    
             this.missionSelector.addEventListener(`change`, () =>{
-            
             resolve(this.missionSelector.value)
             })
         })
