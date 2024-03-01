@@ -107,11 +107,13 @@ class SpaceGame {
         
         requestAnimationFrame(() => this.gameLoop());
         this.gameEnvironment.frameRateManager.update(); 
+
         
         //if(this.actualMission)
         this.rocket.handleKeyboardInput(this.gameEnvironment.keyBoardController.getKeysPressed())
         
     //  this.background.refresh(this.objectMap);
+    this.gameEnvironment.drawBackground()
         this.updateElements();
        // console.log(this.gameEnvironment.svgElement.getBBox())
         
@@ -137,7 +139,7 @@ class SpaceGame {
                 this.dummy.rotation += 1;
                 this.dummy.update()
 
-                this.gameEnvironment.drawBackground("grid")
+                
                 
                 if(!this.rocketAppeared)
                     this.rocket.rotation += .01

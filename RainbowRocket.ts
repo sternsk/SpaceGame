@@ -35,13 +35,12 @@ class RainbowRocket extends SpaceObject {
         this._defsElement = this.createRainbowRocketdefsElement();
         
         this._svgElement.push(this.gElement)
-        console.log(this._svgElement.length.toString())
+        
     }
 
 
 
    
-   //Die folgenden Funktionen habe ich dem Constructor von GameEnvironment entnommen
     private createRainbowRocketdefsElement(): SVGDefsElement[] | undefined{
         //erstelle drei lineardefsElement
         const numberOfdefsElement = 3;
@@ -166,7 +165,6 @@ class RainbowRocket extends SpaceObject {
         summit.setAttribute("stroke", "black");
         summit.setAttribute("stroke-width", ".1");
         this._svgElement?.push(summit)
-        console.log(this._svgElement?.length.toString())
         g.appendChild(summit);
 
         const summitball = document.createElementNS(this.svgNS, "circle") as SVGPathElement;
@@ -176,7 +174,7 @@ class RainbowRocket extends SpaceObject {
         summitball.setAttribute("fill", "orange");
         this._svgElement?.push(summitball)
         g.appendChild(summitball);
-        console.log(this._svgElement?.length.toString())
+        
         return g;
     }
     private createStop(offset: string, stopColor: string, stopOpacity?: string): SVGStopElement {

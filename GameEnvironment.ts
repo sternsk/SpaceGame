@@ -157,6 +157,19 @@ class GameEnvironment{
             return false;
     }
 */
+    drawBackground(){
+        console.log("drawingBackground")
+        let spaceBetweenLines = 10
+        let path: SVGPathElement;
+        path = document.createElementNS("http://www.w3.org/2000/svg", "path")
+        for(let xPosition = this._viewBoxLeft; xPosition<this._viewBoxLeft + this._viewBoxWidth; xPosition = xPosition+ spaceBetweenLines){ 
+            console.log("viewBoxLeft"+ this._viewBoxLeft + "xPosition")
+            path.setAttribute("d", `M ${xPosition} ${this._viewBoxTop} v ${this._viewBoxHeight}`)
+            path.setAttribute("stroke", "white")
+            path.setAttribute("stroke-width", "1px")
+            this._svgElement.appendChild(path)
+        }
+    }
     getAspectRatio(): number{
         return(this._svgElement.getBBox().width / this._svgElement.getBBox().height);
     }
@@ -286,20 +299,17 @@ class GameEnvironment{
             for(let i = 0; i<svgElements.length; i++){
                 svgElements[i].removeAttribute("stroke")
                 svgElements[i].removeAttribute("stroke-width")
-                console.log("removed from part "+i)
                 
             }
 
             for(let i = 0; i < selector.length; i++){
                 svgElements[selector[i]].setAttribute("stroke", "brown")
                 svgElements[selector[i]].setAttribute("Stroke-width", ".2")
-                console.log("added to part "+i)
             }
 
         
             setTimeout(()=>{
                 this.readyForAChange = true
-                console.log(selector)
             }, 2000)
         }
 
@@ -373,7 +383,6 @@ class GameEnvironment{
     // Zoome parabolisch in duration sekunden auf targetWidth Fensterbreite
     // Die Anzahl der zur Verfügung stehenden Frames ergibt sich aus duration * actualFps
     windowSmoothly(mode: string, duration: number, targetWidth: number, targetCenter:{x: number,y: number}, overheadFactor?: number){
-        console.log("window smoothly called")
         //console.log(this._svgElement.getBBox().height)
         const actualFps = this._frameRateManager.getFPS()
         
