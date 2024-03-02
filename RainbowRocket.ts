@@ -33,6 +33,11 @@ class RainbowRocket extends SpaceObject {
         this._svgElement = [];
         this.gElement = this.createRocketSvg();
         this._defsElement = this.createRainbowRocketdefsElement();
+        if(this._defsElement)
+            this._defsElement.forEach((object) =>{
+                this._svgElement!.push(object)
+        })
+        
         
         this._svgElement.push(this.gElement)
         
@@ -41,7 +46,7 @@ class RainbowRocket extends SpaceObject {
 
 
    
-    private createRainbowRocketdefsElement(): SVGDefsElement[] | undefined{
+    private createRainbowRocketdefsElement(): SVGElement[] | undefined{
         //erstelle drei lineardefsElement
         const numberOfdefsElement = 3;
         const linearGradient: SVGLinearGradientElement[] = [];

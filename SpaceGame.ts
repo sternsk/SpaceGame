@@ -142,10 +142,15 @@ class SpaceGame {
                 
                 
                 if(!this.rocketAppeared)
-                    this.rocket.rotation += .01
+                    this.rocket.rotation += .1
                 this.started = true;
                 setTimeout(()=>{
-                    this.rocket.rotation = .5
+                    if(this.rocket.rotation > 0){ 
+                        this.rocket.rotation -= .2
+                        if(this.rocket.rotation < 0){
+                            this.rocket.rotation = 0
+                        }
+                    }
                     this.rocketAppeared = true
                 }, 8000)
                 if(this.rocket.svgElem){ 

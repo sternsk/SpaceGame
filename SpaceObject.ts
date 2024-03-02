@@ -8,7 +8,7 @@ class SpaceObject {
     protected _mass?: number; 
     
     protected gElement?: SVGGElement | null;
-    protected _defsElement?: SVGDefsElement[];
+    protected _defsElement?: SVGElement[];
     protected _svgElement?: SVGElement[];
     protected _rotationPivot: {x: number, y:number} = {x:0, y:0};
 
@@ -111,7 +111,7 @@ class SpaceObject {
         return distanceVector.length;
     }
 
-    get defsElem(): SVGDefsElement[] | undefined{
+    get defsElem(): SVGElement[] | undefined{
         return this._defsElement;
     }
     get direction(): Vector{

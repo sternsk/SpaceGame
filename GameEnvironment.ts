@@ -46,6 +46,7 @@ class GameEnvironment{
         this.controlElements = [];
 
         this.missionSelector = document.createElement("select")
+        this.missionSelector.setAttribute("aria-Label", "State")
         const option = document.createElement("option")
         option.value = "";
         option.textContent = "choose Mission"
@@ -158,17 +159,59 @@ class GameEnvironment{
     }
 */
     drawBackground(){
-        console.log("drawingBackground")
-        let spaceBetweenLines = 10
-        let path: SVGPathElement;
-        path = document.createElementNS("http://www.w3.org/2000/svg", "path")
-        for(let xPosition = this._viewBoxLeft; xPosition<this._viewBoxLeft + this._viewBoxWidth; xPosition = xPosition+ spaceBetweenLines){ 
-            console.log("viewBoxLeft"+ this._viewBoxLeft + "xPosition")
-            path.setAttribute("d", `M ${xPosition} ${this._viewBoxTop} v ${this._viewBoxHeight}`)
-            path.setAttribute("stroke", "white")
-            path.setAttribute("stroke-width", "1px")
-            this._svgElement.appendChild(path)
+        //console.log("drawingBackground")
+        this.label4.textContent = ("viewBoxWidth: " + this._viewBoxWidth)
+        
+        this.removeBackground()
+
+        // setzte den Abstand der Gitternetzlinien bis 100 auf 1px, zwischen 100 und 1000 auf 10px, zwischen 1000 und 10000 auf 100 px
+        // Logarythmus schein zu lahm zu laufen - die Linien werden zu eng bei großer Viewbox ab 5000
+        let spaceBetweenLines = Math.pow(10, Math.floor(Math.log10(this._viewBoxWidth/10)))
+        
+        //console.log("viewBoxLeft"+ this._viewBoxLeft + "viewBoxWidth: " + this._viewBoxWidth)
+        this.label3.textContent = (spaceBetweenLines+"")
+        
+        //zeichne die vertikalen Linien
+        for(let xPosition = Math.floor(this._viewBoxLeft); xPosition < this._viewBoxLeft + this._viewBoxWidth; xPosition++ ){ 
+            if(xPosition % spaceBetweenLines == 0){ 
+                let path = document.createElementNS("http://www.w3.org/2000/svg", "path")
+                path.setAttribute("d", `M ${xPosition} ${this._viewBoxTop} v ${this._viewBoxHeight}`)
+                path.setAttribute("stroke", "beige")
+                if((xPosition / spaceBetweenLines) % spaceBetweenLines == 0)
+                    path.setAttribute("stroke-width", `.5px`)
+                else
+                    path.setAttribute("stroke-width", `.2px`)
+                path.setAttribute('vector-effect', 'non-scaling-stroke')
+                path.setAttribute("class", "bgPathElement")
+                this._svgElement.appendChild(path)
+            }
         }
+        // zeichne die horizontalen Linien
+        for(let yPosition = Math.floor(this._viewBoxTop); yPosition < this.viewBoxTop + this.viewBoxHeight; yPosition++){
+            if(yPosition % spaceBetweenLines == 0){
+               // console.log(spaceBetweenLines)
+                let path = document.createElementNS("http://www.w3.org/2000/svg", "path")
+                path.setAttribute("d", `M ${this.viewBoxLeft} ${yPosition} h ${this._viewBoxWidth}`)
+                path.setAttribute("stroke", "beige")
+                if((yPosition / spaceBetweenLines) % spaceBetweenLines == 0){
+                    path.setAttribute("stroke-width", ".5px")}
+                else{
+                    path.setAttribute("stroke-width", `.2px`)}
+                path.setAttribute("vector-effect", "non-scaling-stroke")
+                path.setAttribute("class", "bgPathElement")
+                this._svgElement.appendChild(path)
+            }
+        }
+    }
+    removeBackground(){
+        //console.log("removing")
+        let elements = document.getElementsByClassName("bgPathElement")
+       // console.log(elements.length)
+        while (elements.length>0){
+            elements[0].parentNode!.removeChild(elements[0]);
+            elements = document.getElementsByClassName("bgPathElement")
+        }
+       // console.log("bg removed")
     }
     getAspectRatio(): number{
         return(this._svgElement.getBBox().width / this._svgElement.getBBox().height);
@@ -234,7 +277,7 @@ class GameEnvironment{
     }
 
     public setLabel1(value: string){
-        this.label1.textContent = value;
+       this.label1.textContent = value;
     }
     
     public setLabel2(value: string){
@@ -314,7 +357,7 @@ class GameEnvironment{
         }
 
         //console.log(this.selector)
-        this.setLabel3("svgElements.length: "+ svgElements.length)
+        //this.setLabel3("svgElements.length: "+ svgElements.length)
         
         
         
