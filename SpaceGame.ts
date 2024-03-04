@@ -9,8 +9,8 @@ class SpaceGame {
     windowing: string = "centered"; //preparing for different screenbehaviour
     dogProcessRunning = false;
     missionChoosen = false;
-    started = false
-    rocketAppeared = false
+    started = true
+    rocketAppeared = true
     message = false;
     messageCount = 0;
     dummy = new SpaceObject()
@@ -115,9 +115,7 @@ class SpaceGame {
     //  this.background.refresh(this.objectMap);
     this.gameEnvironment.drawBackground()
         this.updateElements();
-       // console.log(this.gameEnvironment.svgElement.getBBox())
         
-
         switch(this.windowing){
             case `centered`:
             this.gameEnvironment.viewBoxLeft = this.rocket.position.x - this.gameEnvironment.viewBoxWidth/ 2;
@@ -154,7 +152,6 @@ class SpaceGame {
                     this.rocketAppeared = true
                 }, 8000)
                 if(this.rocket.svgElem){ 
-                    this.gameEnvironment.setLabel2(this.rocket.svgElem.length.toString())
                     this.gameEnvironment.playIntro(this.rocket.svgElem)
                 }
             break;
@@ -414,7 +411,22 @@ class SpaceGame {
 
         let arrow2Direction;
         let arrow2ScaleFactor; 
-        
+        this.objectMap.forEach((object, key) => {
+            object.update()
+
+            //be sure rockets svg is appended at last
+            if(key !="rokket"){ 
+                if(object.defsElem)
+                    this.gameEnvironment.svgElement.appendChild(object.defsElem)
+                if(object.gElem)
+                    this.gameEnvironment.svgElement.appendChild(object.gElem)
+            }            
+        })
+        if(this.rocket.defsElem)
+                    this.gameEnvironment.svgElement.appendChild(this.rocket.defsElem)
+                if(this.rocket.gElem)
+                    this.gameEnvironment.svgElement.appendChild(this.rocket.gElem)
+        /*
         this.objectMap.forEach((object, key) => {
             if(key != "rokket"){
                 object.update();
@@ -433,7 +445,7 @@ class SpaceGame {
                         this.gameEnvironment.svgElement.appendChild(this.rocket.defsElem[i])
                 
         this.gameEnvironment.svgElement.appendChild(this.rocket.gElem!);
-        
+        */
         //this.bromber!.rotationPivot = {x:100, y:100}
 
         //this.gameEnvironment.setLabel1(`ViewBoxWidth: ${this.gameEnvironment.viewBoxWidth}, viewBoxHeight: ${this.gameEnvironment.viewBoxHeight}`)

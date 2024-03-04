@@ -8,7 +8,7 @@ class SpaceObject {
     protected _mass?: number; 
     
     protected gElement?: SVGGElement | null;
-    protected _defsElement?: SVGElement[];
+    protected _defsElement?: SVGDefsElement;
     protected _svgElement?: SVGElement[];
     protected _rotationPivot: {x: number, y:number} = {x:0, y:0};
 
@@ -34,7 +34,7 @@ class SpaceObject {
     constructor();
     
     constructor(...args: any[]){
-        
+
         if (args.length >= 4){
             let[position, velocity, direction, rotation, gElement, imageUrl] = args
             this._position = position;
@@ -54,7 +54,8 @@ class SpaceObject {
                 }
             this._image = undefined;
             
-            if (imageUrl){
+            if (imageUrl && !gElement){
+                //erstelle ein gElement, um das Image einzufügen
                 this.gElement = document.createElementNS("http://www.w3.org/2000/svg", "g");
                 this._image = document.createElementNS("http://www.w3.org/2000/svg", "image");
                 this._image.href.baseVal = imageUrl;    
@@ -62,20 +63,18 @@ class SpaceObject {
                 this.gElement.appendChild(this._image);
                
                 this._image.onload = () =>{
+                    this._imageWidth = this._image!.getBBox().width;
+                    this.centerOfImage = {x: this._image!.getBBox().width / 2, y: this._image!.getBBox().height / 2}
                 
-                    if(this._image && this.gElement){
-                        this._imageWidth = this._image.getBBox().width;
-                        this.centerOfImage = {x: this._image.getBBox().width / 2, y: this._image.getBBox().height / 2}
-                    
-                    this._image.setAttribute('x', ((-this.centerOfImage.x).toString()));//probiere auch this.image.getBBox().width und 
-                    this._image.setAttribute('y', ((-this.centerOfImage.y).toString())); // -  this.image.height.baseVal.value/ 2
+                    this._image!.setAttribute('x', ((-this.centerOfImage.x).toString()));//probiere auch this.image.getBBox().width und 
+                    this._image!.setAttribute('y', ((-this.centerOfImage.y).toString())); // -  this.image.height.baseVal.value/ 2
                     
                     //console.log("rotationPivot set by Spaceobject")
-                    }
+                    
                 };
             }    
         }
-        if (args.length ===0){
+        if (args.length === 0){
             this._rotation = 0;
             this._mass = 0;
         }
@@ -111,7 +110,7 @@ class SpaceObject {
         return distanceVector.length;
     }
 
-    get defsElem(): SVGElement[] | undefined{
+    get defsElem(): SVGDefsElement | undefined{
         return this._defsElement;
     }
     get direction(): Vector{
@@ -181,9 +180,6 @@ class SpaceObject {
             this.brake(this._maneuverability/100);
         }
         
-        if (keysPressed[' ']) {
-            //Aktion beim Drücken von Space
-        }
         // console.log(keysPressed);
         // Weitere Tastenabfragen...
     }

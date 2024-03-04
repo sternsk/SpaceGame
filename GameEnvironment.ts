@@ -39,7 +39,7 @@ class GameEnvironment{
         //initialisiere UserSpace
         this._viewBoxLeft = -500;
         this._viewBoxTop = -500;
-        this._viewBoxWidth = 4500;
+        this._viewBoxWidth = 500;
         this._viewBoxHeight = 3/4 * this._viewBoxWidth; //viewBoxAttribuntes get overriden by svg-Size Attributes in css stylesheet
 
         //eine Reihe Kontrollelemte: aktuelle Flüghöhe, aktuelles Energielevel, Mauszeigerposition, aktuelle Masse...
@@ -169,7 +169,7 @@ class GameEnvironment{
         let spaceBetweenLines = Math.pow(10, Math.floor(Math.log10(this._viewBoxWidth/10)))
         
         //console.log("viewBoxLeft"+ this._viewBoxLeft + "viewBoxWidth: " + this._viewBoxWidth)
-        this.label3.textContent = (spaceBetweenLines+"")
+        //this.label3.textContent = (spaceBetweenLines+"")
         
         //zeichne die vertikalen Linien
         for(let xPosition = Math.floor(this._viewBoxLeft); xPosition < this._viewBoxLeft + this._viewBoxWidth; xPosition++ ){ 
@@ -324,7 +324,7 @@ class GameEnvironment{
             this.readyForAChange = false
             selector = []
             // add up to svgElements.length random numbers to selector[] // handle zero separately, its the whole bunch //try not to repeat the numbers!
-            if(Math.random()*3 < 1){ 
+            if(Math.random() < .3){ 
                 for(let i = 0; i < Math.ceil(Math.random() * svgElements.length); i++){
                     repeat = true;
                         while(repeat){ 
