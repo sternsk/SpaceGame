@@ -69,7 +69,7 @@ class RainbowRocket extends SpaceObject {
         const fire = document.getElementById("fire")
         const movementDuration = Math.random()+.5                   // .5-1.5 sec per flameMovement
         const fps = 60                                              // assuming 60 frames per second
-        const numberOfFramesForOneMovement = movementDuration * fps // after oneMovement each Point gets a new delta
+        const numberOfFramesForOneMovement = Math.floor(movementDuration * fps) // after oneMovement each Point gets a new delta
         fire?.setAttribute("display", "block")
         
         let deltaValues: {x: number, y: number}[][] = []
@@ -77,11 +77,10 @@ class RainbowRocket extends SpaceObject {
 
         for(let i = 0; i<6; i++){
             deltaValues[i] = []
-
+            deltaPerFrame[i] = []
             for(let j = 0; j<2; j++){ 
                 deltaValues[i][j] = {x: Math.random()*4-2, y: Math.random()*4-2}
-                deltaPerFrame[i][j].x = deltaValues[i][j].x / numberOfFramesForOneMovement
-                deltaPerFrame[i][j].y = deltaValues[i][j].y / numberOfFramesForOneMovement 
+                deltaPerFrame[i][j] = {x: deltaValues[i][j].x / numberOfFramesForOneMovement, y: deltaValues[i][j].y / numberOfFramesForOneMovement}
             }
         }
 /*
@@ -210,6 +209,7 @@ class RainbowRocket extends SpaceObject {
         
             requestAnimationFrame(animateFire)
         }
+        animateFire()
 
     }
     animateSummit(){

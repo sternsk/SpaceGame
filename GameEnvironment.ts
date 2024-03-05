@@ -360,7 +360,7 @@ class GameEnvironment{
         //this.setLabel3("svgElements.length: "+ svgElements.length)
         
         
-        
+        /*
         if(keysPressed["ArrowUp"]){
             this._viewBoxWidth += 10
             this._viewBoxHeight = this._viewBoxWidth/4*3
@@ -385,7 +385,7 @@ class GameEnvironment{
 
         if(keysPressed[" "]){}
             //spaceGame.rocket.animateSummitBall()
-        
+        */
     }
 
     async missionSelection(): Promise<string>{
