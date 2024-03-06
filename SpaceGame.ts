@@ -112,8 +112,8 @@ class SpaceGame {
         //if(this.actualMission)
         this.rocket.handleKeyboardInput(this.gameEnvironment.keyBoardController.getKeysPressed())
         
-    //  this.background.refresh(this.objectMap);
-    this.gameEnvironment.drawBackground()
+        //  this.background.refresh(this.objectMap);
+        this.gameEnvironment.drawBackground()
         this.updateElements();
         
         switch(this.windowing){
@@ -162,6 +162,7 @@ class SpaceGame {
                 if(!this.message&&this.messageCount == 0){
                     this.gameEnvironment.windowSmoothly("linear", 5, 450, this.rocket.position.toPoint())
                     this.windowing = ""
+                    this.rocket.velocity = new Vector(0,0);
                     this.gameEnvironment.setMessage(`Ich begrüße Sie herzlich, Commander. Dies ist Ihre Rakete und wir sind Ihre Crew. 
                     Wir begleiten Sie bei Ihrer Reise durch den Raum. 
                     Steuern Sie die Rakete mit den Pfeiltasten.`, this.defaultMessageDuration, 1, (shown) =>{
@@ -203,7 +204,11 @@ class SpaceGame {
                 
                 if(this.message && this.messageCount == 3){
                     this.message = false;
-                    this.gameEnvironment.windowSmoothly("parabolic", 2, 3000, this.bromber!.position.toPoint(), .8)
+                    this.gameEnvironment.windowSmoothly("parabolic",
+                                                         2, this.godPlanet?.distance(this.bromber?.position!)!* 5, 
+                                                         {x: (this.bromber!.position.x - this.godPlanet!.position.x) / 2 + this.godPlanet!.position.x,
+                                                            y: (this.bromber!.position.y - this.bromber!.position.y) / 2 + this.godPlanet!.position.y},
+                                                        .8)
                     this.gameEnvironment.setMessage(`In dieser Umgebung werden Sie die Rakete steuern...`,
                     this.defaultMessageDuration, 
                     1, 
@@ -218,6 +223,7 @@ class SpaceGame {
 
                 if(this.message && this.messageCount == 4){
                     this.message = false;
+                    this.windowing = `centered`
                     this.gameEnvironment.windowSmoothly("linear", 2, 800, this.rocket.position.toPoint(), .8)
                     this.gameEnvironment.setMessage(`Nur Mut, Commander. Beschleunigen Sie die Rakete, 
                     bis der weiße Geschwindigkeitspfeil größer 
@@ -344,9 +350,9 @@ class SpaceGame {
                     
                     this.messageCount++
                 }
-                if (this.messageCount == 11 && this.rocket.distance(this.godPlanet!.position) < 100 ){
+                if (this.messageCount == 11 && this.rocket.distance(this.godPlanet!.position) < 250 ){
                     this.message = false;
-                    this.gameEnvironment.windowSmoothly("parabolic", 3, 800, this.godPlanet!.position)
+                    this.gameEnvironment.windowSmoothly("parabolic", 3, 1200, this.godPlanet!.position)
                     this.gameEnvironment.setMessage(`Krass, Commander! Wir stehen hier mitten im Weltraum. Direkt vor uns befindet sich 
                                                     ein riesiges supermassereiches schwarzes Loch!`,20, 1, (shown)=>{
                         this.message = true
