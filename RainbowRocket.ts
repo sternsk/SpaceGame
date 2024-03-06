@@ -24,15 +24,6 @@ class RainbowRocket extends SpaceObject {
     
     private flameSpire3RightPathControlPoint = {x:3, y:5}   //[5]
     
-    private propulsionFireData: {x: number, y: number}[][] = [
-        [{x: this.flameSpire1LeftPathControlPoint.x, y: this.flameSpire1LeftPathControlPoint.y}, {x: this.flameSpire1LeftPath.x, y: this.flameSpire1LeftPath.y}],
-        [{x: this.flameSpire1RightPathControlPoint.x, y: this.flameSpire1RightPathControlPoint.y}, {x: this.flameSpire1RightPath.x, y: this.flameSpire1RightPath.y}],
-        [{x: this.flameSpire2LeftPathControlPoint.x, y: this.flameSpire2LeftPathControlPoint.y}, {x: this.flameSpire2LeftPath.x, y: this.flameSpire2LeftPath.y}],
-        [{x: this.flameSpire2RightPathControlPoint.x, y: this.flameSpire2RightPathControlPoint.y}, {x: this.flameSpire2RightPath.x, y: this.flameSpire2RightPath.y}],
-        [{x: this.flameSpire3LeftPathControlPoint.x, y: this.flameSpire3LeftPathControlPoint.y}, {x: this.flameSpire3LeftPath.x, y: this.flameSpire3LeftPath.y}],
-        [{x: this.flameSpire3RightPathControlPoint.x, y: this.flameSpire3RightPathControlPoint.y}, {x:0, y:0}]
-    ];
-    
     // Constructor overload without parameters
     constructor();
 
@@ -69,40 +60,27 @@ class RainbowRocket extends SpaceObject {
     }
 
     propulsionFire(){
-    if(this.needAChange){ 
-        this.needAChange = false
         //grab the fire out of the DOM
         const fire = document.getElementById("fire")
-        const movementDuration = .55                   // .5-1.5 sec per flameMovement
-        const flameDistraction = 10
-        const fps = 60                                              // assuming 60 frames per second
-        const numberOfFramesForOneMovement = Math.floor(movementDuration * fps) // after oneMovement each Point gets a new delta
+        const flameDistraction = this.velocity.length/5
+                                                  
         fire?.setAttribute("display", "block")
 
         let animateFire = () =>{}
-        let frameCount = 1
         
-        let newFlameValues: {x: number, y: number}[][] = []
-        let flameValuesPerFrame: {x: number, y: number}[][] = []
-        let deltaFlameValues: {x: number, y: number}[][] = []
+        let deltaValues: {x: number, y: number}[] []= []
 
         for(let i = 0; i<6; i++){
             
-            newFlameValues[i] = []
-            deltaFlameValues[i] = []
-            flameValuesPerFrame[i] = []
+            deltaValues[i] = []
             for(let j = 0; j<2; j++){ 
                 // propulsionFireData serves as Attractor
                 // console.log("i: "+i+"j: "+j)
                 // console.log(this.propulsionFireData[i][j].x)
                 
-                newFlameValues[i][j] = {x: this.propulsionFireData[i][j].x + Math.random()*flameDistraction - flameDistraction/2, 
-                                    y: this.propulsionFireData[i][j].y + Math.random()*flameDistraction - flameDistraction/3}
+                deltaValues[i][j] = {x: Math.random()*flameDistraction - flameDistraction/2, 
+                                    y: Math.random()*flameDistraction - flameDistraction/3}
 
-                deltaFlameValues[i][j] = {x: newFlameValues[i][j].x - this.propulsionFireData[i][j].x, y: newFlameValues[i][j].y - this.propulsionFireData[i][j].y}
-               // console.log(Math.random()*flameDistraction/2-flameDistraction)
-                
-                flameValuesPerFrame[i][j] = {x: deltaFlameValues[i][j].x / numberOfFramesForOneMovement, y: deltaFlameValues[i][j].y / numberOfFramesForOneMovement}
             }
             
         }
@@ -126,80 +104,51 @@ class RainbowRocket extends SpaceObject {
                                         Q 1 7, 2 8      flameSpire3
                                         Q 3 5, 2 2
                                         Q 0 1.5, -2 2   closing path
-        // define five random points as delta-flamespires and corresponding random delta-controlPoints
+       // outdatet - see branch "misconception of flamemovement"
+       // define five random points as delta-flamespires and corresponding random delta-controlPoints
         // for each point define a random framenumber when to reach the target point
         // when targetpoint is reached, ask for the next random target point
         // ask for the next frame and then move the path attribut linear stepwise to their target-direction
         //that means creating 
         */
-            if(frameCount <= numberOfFramesForOneMovement){
-                //console.log(frameCount+" "+deltaPerFrame[0][0].x)
-                
-                this.flameSpire1LeftPathControlPoint.x += flameValuesPerFrame[0][0].x
-                this.flameSpire1LeftPathControlPoint.y += flameValuesPerFrame[0][0].y
-                this.flameSpire1LeftPath.x += flameValuesPerFrame[0][1].x
-                this.flameSpire1LeftPath.y += flameValuesPerFrame[0][1].y
-                this.flameSpire1RightPathControlPoint.x += flameValuesPerFrame[1][0].x
-                this.flameSpire1RightPathControlPoint.y += flameValuesPerFrame[1][0].y
-                this.flameSpire1RightPath.x += flameValuesPerFrame[1][1].x
-                this.flameSpire1RightPath.y += flameValuesPerFrame[1][1].y
-
-                this.flameSpire2LeftPathControlPoint.x += flameValuesPerFrame[2][0].x
-                this.flameSpire2LeftPathControlPoint.y += flameValuesPerFrame[2][0].y
-                this.flameSpire2LeftPath.x += flameValuesPerFrame[2][1].x
-                this.flameSpire2LeftPath.y += flameValuesPerFrame[2][1].y
-                this.flameSpire2RightPathControlPoint.x += flameValuesPerFrame[3][0].x
-                this.flameSpire2RightPathControlPoint.y += flameValuesPerFrame[3][0].y
-                this.flameSpire2RightPath.x += flameValuesPerFrame[3][1].x
-                this.flameSpire2RightPath.y += flameValuesPerFrame[3][1].y
-                
-                this.flameSpire3LeftPathControlPoint.x += flameValuesPerFrame[4][0].x
-                this.flameSpire3LeftPathControlPoint.y += flameValuesPerFrame[4][0].y
-                this.flameSpire3LeftPath.x += flameValuesPerFrame[4][1].x
-                this.flameSpire3LeftPath.y += flameValuesPerFrame[4][1].y
-                this.flameSpire3RightPathControlPoint.x += flameValuesPerFrame[5][0].x
-                this.flameSpire3RightPathControlPoint.y += flameValuesPerFrame[5][0].y
-                
-                fire?.setAttribute("d", `M -2 2 
-                                        Q   ${this.flameSpire1LeftPathControlPoint.x} 
-                                            ${this.flameSpire1LeftPathControlPoint.y}, 
-                                            ${this.flameSpire1LeftPath.x} 
-                                            ${this.flameSpire1LeftPath.y} 
-                                        Q   ${this.flameSpire1RightPathControlPoint.x} 
-                                            ${this.flameSpire1RightPathControlPoint.y}, 
-                                            ${this.flameSpire1RightPath.x} 
-                                            ${this.flameSpire1RightPath.y}
-                                        Q   ${this.flameSpire2LeftPathControlPoint.x} 
-                                            ${this.flameSpire2LeftPathControlPoint.y}, 
-                                            ${this.flameSpire2LeftPath.x} 
-                                            ${this.flameSpire2LeftPath.y} 
-                                        Q   ${this.flameSpire2RightPathControlPoint.x} 
-                                            ${this.flameSpire2RightPathControlPoint.y}, 
-                                            ${this.flameSpire2RightPath.x} 
-                                            ${this.flameSpire2RightPath.y} 
-                                        Q   ${this.flameSpire3LeftPathControlPoint.x} 
-                                            ${this.flameSpire3LeftPathControlPoint.y}, 
-                                            ${this.flameSpire3LeftPath.x} 
-                                            ${this.flameSpire3LeftPath.y} 
-                                        Q   ${this.flameSpire3RightPathControlPoint.x} 
-                                            ${this.flameSpire3RightPathControlPoint.y}, 
-                                            2 2
-                                        Q   0 1.5, -2 2
-                                        `)
+            
+            fire?.setAttribute("d", `M -2 2 
+                                    Q   ${this.flameSpire1LeftPathControlPoint.x + deltaValues[0][0].x} 
+                                        ${this.flameSpire1LeftPathControlPoint.y + deltaValues[0][0].y}, 
+                                        ${this.flameSpire1LeftPath.x + deltaValues[0][1].x} 
+                                        ${this.flameSpire1LeftPath.y + deltaValues[0][1].y} 
+                                    Q   ${this.flameSpire1RightPathControlPoint.x + deltaValues[1][0].x} 
+                                        ${this.flameSpire1RightPathControlPoint.y + deltaValues[1][0].y}, 
+                                        ${this.flameSpire1RightPath.x + deltaValues[1][1].x} 
+                                        ${this.flameSpire1RightPath.y + deltaValues[1][1].y}
+                                    Q   ${this.flameSpire2LeftPathControlPoint.x + deltaValues[2][0].x} 
+                                        ${this.flameSpire2LeftPathControlPoint.y + deltaValues[2][0].y}, 
+                                        ${this.flameSpire2LeftPath.x + deltaValues[2][1].x} 
+                                        ${this.flameSpire2LeftPath.y + deltaValues[2][1].y} 
+                                    Q   ${this.flameSpire2RightPathControlPoint.x + deltaValues[3][0].x} 
+                                        ${this.flameSpire2RightPathControlPoint.y + deltaValues[3][0].y}, 
+                                        ${this.flameSpire2RightPath.x + deltaValues[3][1].x} 
+                                        ${this.flameSpire2RightPath.y + deltaValues[3][1].y} 
+                                    Q   ${this.flameSpire3LeftPathControlPoint.x + deltaValues[4][0].x} 
+                                        ${this.flameSpire3LeftPathControlPoint.y + deltaValues[4][0].y}, 
+                                        ${this.flameSpire3LeftPath.x + deltaValues[4][1].x} 
+                                        ${this.flameSpire3LeftPath.y + deltaValues[4][1].y} 
+                                    Q   ${this.flameSpire3RightPathControlPoint.x + deltaValues[5][0].x} 
+                                        ${this.flameSpire3RightPathControlPoint.y + deltaValues[5][0].y}, 
+                                        2 2
+                                    Q   0 1.5, -2 2
+                                    `)
                 fire?.setAttribute("stroke", "brown")
             }
-            frameCount++
-            requestAnimationFrame(animateFire)  
-            if(frameCount == numberOfFramesForOneMovement)
-                this.needAChange = true;  //
             
-        }
+            requestAnimationFrame(animateFire)  
+        
         animateFire()
         
         
     }
 
-    }
+    
     animateSummit(){
         const summitBall = document.getElementById("summitBall")
         const summit = document.getElementById("summit")
@@ -403,7 +352,7 @@ class RainbowRocket extends SpaceObject {
         }
         else{
             let fire = document.getElementById("fire")
-            fire?.setAttribute("display", "block")
+            fire?.setAttribute("display", "none")
         }
         
     }
