@@ -149,7 +149,10 @@ class SpaceGame {
                             this.rocket.rotation = 0
                         }
                     }
+                    if(!this.rocketAppeared)
+                        this.gameEnvironment.setMessage("Welcome to Space Patrol. Commander Samejon!", 2, 0, (showm) =>{})
                     this.rocketAppeared = true
+                    
                 }, 8000)
                 if(this.rocket.svgElem){ 
                     this.gameEnvironment.playIntro(this.rocket.svgElem)
