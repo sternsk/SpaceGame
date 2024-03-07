@@ -11,6 +11,7 @@ class GameEnvironment{
     private _viewBoxTop: number;
     private _viewBoxWidth: number;
     private _viewBoxHeight: number;
+    private bgImage?: SVGImageElement;
     private defsElement: SVGDefsElement;
     private controlElements: HTMLElement[];
     missionSelector: HTMLSelectElement;
@@ -310,6 +311,18 @@ class GameEnvironment{
             });                     
             document.getElementById("textBox")?.appendChild(option);
         });
+    }
+
+    insertBackgroundPicture(){
+        this.bgImage = document.createElementNS("http://www.w3.org/2000/svg", "image");
+        this.bgImage.href.baseVal = "../resources/bgImage.png";
+
+        this.bgImage.onload = () => {
+            this.bgImage?.setAttribute("x", "-200")
+            this.bgImage?.setAttribute("y", "-200")
+        }
+        this.svgElement.appendChild(this.bgImage)
+
     }
 
     playIntro(svgElements: SVGElement[]){

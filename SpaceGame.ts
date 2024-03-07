@@ -57,10 +57,11 @@ class SpaceGame {
         while (this.actualMission === "") {
             this.actualMission = await this.gameEnvironment.missionSelection();
         }
-
+        
         switch(this.actualMission){
             
             case`goddog`:
+                
                 this.godPlanet = new SpaceObject(
                 Vector.fromPoint({x:-3000,y:500}),          //Position
                 new Vector(0,0),                       //velocity
