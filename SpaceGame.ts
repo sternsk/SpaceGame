@@ -408,8 +408,13 @@ class SpaceGame {
             }
         });*/
         // insert the gameEnvironment svg to svg Container
-        this.gameEnvironment.insertBackgroundPicture()
+        //this.gameEnvironment.insertBackgroundPicture()
         document.getElementById('svgContainer')!.appendChild(this.gameEnvironment.svgElement);
+        console.log("in spacegame(init): this._svgElement.getBBox().height: "+this.gameEnvironment.svgElement.getBBox().height)
+        console.log("in spacegame(init): this._svgElement.getBBox().width: "+this.gameEnvironment.svgElement.getBBox().width)
+        console.log("in spacegame(init): this._svgElement.getBBox().height: "+this.gameEnvironment.svgElement.getBBox().x)
+        console.log("in spacegame(init): this._svgElement.getBBox().width: "+this.gameEnvironment.svgElement.getBBox().y)
+        console.log()
         this.start();
         this.gameLoop();
     }
@@ -461,7 +466,7 @@ class SpaceGame {
 
         //this.gameEnvironment.setLabel1(`ViewBoxWidth: ${this.gameEnvironment.viewBoxWidth}, viewBoxHeight: ${this.gameEnvironment.viewBoxHeight}`)
         //this.gameEnvironment.setLabel2(`ViewBoxWidth: ${this.gameEnvironment.viewBoxWidth}, viewBoxHeight: ${this.gameEnvironment.viewBoxHeight}`) //Die Verwendung von Backticks (`) anstelle von einfachen oder doppelten Anführungszeichen ermöglicht die direkte Einfügung von JavaScript-Ausdrücken innerhalb der Zeichenkette. Beide Methoden erreichen dasselbe Ziel, aber der zweite Ausdruck mit Template Literal ist in der Regel leserlicher und einfacher zu handhaben, besonders wenn komplexe Ausdrücke oder mehrere Variablen eingefügt werden müssen. Template Literals bieten auch eine verbesserte Lesbarkeit, da sie mehrzeilige Zeichenketten unterstützen, ohne dass Escape-Zeichen erforderlich sind.
-        //this.gameEnvironment.setLabel3(`God Pos: ${this.godPlanet!.position.x.toFixed(0)}, ${this.godPlanet!.position.y.toFixed(0)}`)
+        //this.gameEnvironment.setLabel3()
         
         this.gameEnvironment.setArrow1(this.rocket.velocity.angle + 90, this.rocket.velocity.length)
         
