@@ -57,7 +57,7 @@ class SpaceGame {
         while (this.actualMission === "") {
             this.actualMission = await this.gameEnvironment.missionSelection();
         }
-        
+
         switch(this.actualMission){
             
             case`goddog`:
@@ -408,6 +408,7 @@ class SpaceGame {
             }
         });*/
         // insert the gameEnvironment svg to svg Container
+        this.gameEnvironment.insertBackgroundPicture()
         document.getElementById('svgContainer')!.appendChild(this.gameEnvironment.svgElement);
         this.start();
         this.gameLoop();
