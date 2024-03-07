@@ -59,7 +59,7 @@ class GameEnvironment{
 
         this.label2 = document.createElement("div");
         this.label2.setAttribute('class', 'transformValue')
-        this.label2.textContent = "Choose Your Mission"; 
+        this.label2.textContent = "Arrow keys to navigate"; 
         
         this.arrow1 = document.createElementNS("http://www.w3.org/2000/svg", "polygon")
         this.arrow1.setAttribute("viewBox", "-50 -50 100 100");
@@ -84,7 +84,7 @@ class GameEnvironment{
         
         this.label3 = document.createElement("div");
         this.label3.setAttribute('class', 'transformValue')
-        this.label3.textContent = "Commander";
+        this.label3.textContent = "Space to chisel!";
         
         this.label4 = document.createElement("div");
         this.label4.setAttribute('class', 'transformValue')
@@ -161,7 +161,7 @@ class GameEnvironment{
 */
     drawBackground(){
         //console.log("drawingBackground")
-        this.label4.textContent = ("viewBoxWidth: " + this._viewBoxWidth)
+        this.label4.textContent = ("viewBoxWidth: " + this._viewBoxWidth.toFixed(0))
         
         this.removeBackground()
 
@@ -373,7 +373,7 @@ class GameEnvironment{
         //this.setLabel3("svgElements.length: "+ svgElements.length)
         
         
-        
+        /*
         if(keysPressed["ArrowUp"]){
             this._viewBoxWidth += 10
             this._viewBoxHeight = this._viewBoxWidth/4*3
@@ -398,7 +398,7 @@ class GameEnvironment{
 
         if(keysPressed[" "]){}
             //spaceGame.rocket.animateSummitBall()
-        
+        */
     }
 
     async missionSelection(): Promise<string>{
