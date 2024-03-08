@@ -9,8 +9,8 @@ class SpaceGame {
     windowing: string = "centered"; //preparing for different screenbehaviour
     dogProcessRunning = false;
     missionChoosen = false;
-    started = true
-    rocketAppeared = true
+    started = false
+    rocketAppeared = false
     message = false;
     messageCount = 0;
     dummy = new SpaceObject()
