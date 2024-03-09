@@ -3,26 +3,34 @@ class RainbowRocket extends SpaceObject {
     private svgNS = "http://www.w3.org/2000/svg";
     private wingLeft: SVGPathElement = document.createElementNS(this.svgNS, "path") as SVGPathElement;
     private wingRight: SVGPathElement = document.createElementNS(this.svgNS, "path") as SVGPathElement;
+    private summitball: SVGPathElement = document.createElementNS("http://www.w3.org/2000/svg", "path")
+    private summitballX: number = 0
+    private summitballY: number = -10
 
     //preparing values for the animation of the propulsion fire
     // initiate an Array with propulsion fire data as attractor to prevent wild fireing
     private needAChange = true
     private flameSpire1LeftPathControlPoint = {x:-3, y:5}   //[0][0].x
     private flameSpire1LeftPath = {x: -2, y: 8}             ////[0][1] [0][1].y
-    
     private flameSpire1RightPathControlPoint = {x:-1, y:7}
     private flameSpire1RightPath = {x: -1, y: 6}            //[1]
-    
     private flameSpire2LeftPathControlPoint = {x:-1, y:7.5}
     private flameSpire2LeftPath = {x: 0, y: 9}              //[2]
-    
     private flameSpire2RightPathControlPoint = {x:1, y:7.5}
     private flameSpire2RightPath = {x: 1, y: 6}             //[3]
-    
     private flameSpire3LeftPathControlPoint = {x:1, y:7}
     private flameSpire3LeftPath = {x: 2, y: 8}              //[4]
-    
     private flameSpire3RightPathControlPoint = {x:3, y:5}   //[5]
+
+    private innerFlameSpire1LeftPathControlPoint = {x: -1.5 , y:2.5}
+    private innerFlameSpire1LeftPath = {x: -1, y:4.5}
+    private innerFlameSpire1RightPathControlPoint = {x:-.5 , y:4.5}
+    private innerFlameSpire1RightPath = {x: 0, y:3}
+    private innerFlameSpire2LeftPathControlPoint = {x:.5 , y:4}
+    private innerFlameSpire2LeftPath = {x: 1, y:4.5}
+    private innerFlameSpire2RightPathControlPoint = {x:1.5 , y:3.5}
+
+    
     
     // Constructor overload without parameters
     constructor();
@@ -148,18 +156,58 @@ class RainbowRocket extends SpaceObject {
         
     }
 
+    animateInnerFire(){
+        const fire = document.getElementById("innerfire")
+        
+        const flameDistraction = this.velocity.length/20
+
+        let animateFire = () =>{}
+        
+        let deltaValue: {x: number, y: number}[] = []
+        for(let i=0;i<2;i++){ 
+            deltaValue[i] = {x: Math.random()*flameDistraction - flameDistraction/2, 
+                                    y: Math.random()*flameDistraction - flameDistraction/2.2}
+        }
+        animateFire = () =>{
+            
+            fire?.setAttribute("d", `M -1 1.5 
+                                    Q   ${this.innerFlameSpire1LeftPathControlPoint.x + deltaValue[0].x} 
+                                        ${this.innerFlameSpire1LeftPathControlPoint.y + deltaValue[0].y}, 
+                                        ${this.innerFlameSpire1LeftPath.x + deltaValue[0].x} 
+                                        ${this.innerFlameSpire1LeftPath.y + deltaValue[0].y} 
+                                    Q   ${this.innerFlameSpire1RightPathControlPoint.x + deltaValue[0].x} 
+                                        ${this.innerFlameSpire1RightPathControlPoint.y + deltaValue[0].y}, 
+                                        ${this.innerFlameSpire1RightPath.x + deltaValue[0].x} 
+                                        ${this.innerFlameSpire1RightPath.y + deltaValue[0].y}
+                                    Q   ${this.innerFlameSpire2LeftPathControlPoint.x + deltaValue[0].x} 
+                                        ${this.innerFlameSpire2LeftPathControlPoint.y + deltaValue[0].y}, 
+                                        ${this.innerFlameSpire2LeftPath.x + deltaValue[0].x} 
+                                        ${this.innerFlameSpire2LeftPath.y + deltaValue[0].y} 
+                                    Q   ${this.innerFlameSpire2RightPathControlPoint.x + deltaValue[0].x} 
+                                        ${this.innerFlameSpire2RightPathControlPoint.y + deltaValue[0].y}, 
+                                        0 -3
+                                        
+                                    `)
+                }
+            
+            requestAnimationFrame(animateFire)  
+        
+        animateFire()
+        
+        
+    }
     
     animateSummit(){
         const summitBall = document.getElementById("summitBall")
         const summit = document.getElementById("summit")
-        let summitBallX = Math.random() * 2 - 1
-        let summitBallY = Math.random() * -2 - 9
-        summitBall?.setAttribute("cx", `${summitBallX}`)
-        summitBall?.setAttribute("cy", `${summitBallY}`)
+        this.summitballX = Math.random() * 2 - 1
+        this.summitballY = Math.random() * -2 - 9
+        summitBall?.setAttribute("cx", `${this.summitballX}`)
+        summitBall?.setAttribute("cy", `${this.summitballY}`)
         summit?.setAttribute("stroke", "grey")
         summit?.setAttribute("stroke-width", ".1")
-        summit?.setAttribute("x2", `${summitBallX}`)
-        summit?.setAttribute("y2", `${summitBallY}`)
+        summit?.setAttribute("x2", `${this.summitballX}`)
+        summit?.setAttribute("y2", `${this.summitballY}`)
     }
 
     private createRainbowRocketdefsElement(){
@@ -274,7 +322,23 @@ class RainbowRocket extends SpaceObject {
 
         const innerfire = document.createElementNS(this.svgNS, "path") as SVGPathElement;
         innerfire.setAttribute("id", "innerfire");
-        innerfire.setAttribute("d", "M-1 1.5 q -.5 1 , 0 3 q .5 0, 1 -1.5 q .5 1, 1 1.5 q .5 -1, 0 -3");
+        innerfire.setAttribute("d", `M-1 1.5 
+                                        Q ${this.innerFlameSpire1LeftPathControlPoint.x}  
+                                            ${this.innerFlameSpire1LeftPathControlPoint.y} , 
+                                            ${this.innerFlameSpire1LeftPath.x} 
+                                            ${this.innerFlameSpire1LeftPath.y}   
+                                        Q   ${this.innerFlameSpire1RightPathControlPoint.x}  
+                                            ${this.innerFlameSpire1RightPathControlPoint.y} , 
+                                            ${this.innerFlameSpire1RightPath.x} 
+                                            ${this.innerFlameSpire1RightPath.y}  
+                                        Q ${this.innerFlameSpire2LeftPathControlPoint.x} 
+                                            ${this.innerFlameSpire2LeftPathControlPoint.y} , 
+                                            ${this.innerFlameSpire2LeftPath.x}
+                                            ${this.innerFlameSpire2LeftPath.y} 
+                                        Q ${this.innerFlameSpire2RightPathControlPoint.x} 
+                                            ${this.innerFlameSpire2RightPathControlPoint.x}, 
+                                            1
+                                            1.5`);
         innerfire.setAttribute("fill", "orange");
         this._svgElement?.push(innerfire)
         g.appendChild(innerfire);
@@ -321,14 +385,14 @@ class RainbowRocket extends SpaceObject {
         this._svgElement?.push(summit)
         g.appendChild(summit);
 
-        const summitball = document.createElementNS(this.svgNS, "circle") as SVGPathElement;
-        summitball.setAttribute("id", "summitBall")
-        summitball.setAttribute("cx", "0");
-        summitball.setAttribute("cy", "-10");
-        summitball.setAttribute("r", ".2");
-        summitball.setAttribute("fill", "orange");
-        this._svgElement?.push(summitball)
-        g.appendChild(summitball);
+        this.summitball = document.createElementNS(this.svgNS, "circle") as SVGPathElement;
+        this.summitball.setAttribute("id", "summitBall")
+        this.summitball.setAttribute("cx", "0");
+        this.summitball.setAttribute("cy", "-10");
+        this.summitball.setAttribute("r", ".2");
+        this.summitball.setAttribute("fill", "orange");
+        this._svgElement?.push(this.summitball)
+        g.appendChild(this.summitball);
         
         return g;
     }
@@ -342,10 +406,25 @@ class RainbowRocket extends SpaceObject {
         return stop;
     }
 
+    update(){
+        super.update()
+        this.animateInnerFire()
+    }
+
     handleKeyboardInput(keysPressed: {[key: string]: boolean}) {
         super.handleKeyboardInput(keysPressed)
         if (keysPressed[' ']) {
             this.animateSummit()
+            let summitShit: SVGPathElement = document.createElementNS("http://www.w3.org/2000/svg", "path")
+            let svgElem = document.getElementsByClassName("mainSVG").item(0) as SVGSVGElement
+
+            summitShit.setAttribute("d", `M ${this._position.x + this.summitballX} ${this.position.y + this.summitballY} v10`)
+            summitShit.setAttribute("stroke", "brown")
+            summitShit.setAttribute("stroke-width", "10px")
+            summitShit.setAttribute("class", "summitShit")
+            
+            svgElem?.appendChild(summitShit)
+           
         }
         if(keysPressed[`ArrowUp`]){
             this.propulsionFire()    

@@ -40,8 +40,8 @@ class GameEnvironment{
         //initialisiere UserSpace
         this._viewBoxLeft = -5500;
         this._viewBoxTop = -550;
-        this._viewBoxWidth = 500;
-        
+        this._viewBoxWidth = 1500;
+    
         this._viewBoxHeight = 3/4 * this._viewBoxWidth; //viewBoxAttribuntes get overriden by svg-Size Attributes in css stylesheet
 
         //eine Reihe Kontrollelemte: aktuelle Flüghöhe, aktuelles Energielevel, Mauszeigerposition, aktuelle Masse...
@@ -123,10 +123,10 @@ class GameEnvironment{
        
         
         this._svgElement.setAttribute("viewBox", `${this._viewBoxLeft} ${this._viewBoxTop} ${this._viewBoxWidth} ${this._viewBoxHeight}`);
-        console.log("this._viewBoxHeight: "+this._viewBoxHeight)
+   /*     console.log("this._viewBoxHeight: "+this._viewBoxHeight)
         console.log(`this._svgElement.getAttribute("viewBox"): `+this._svgElement.getAttribute("viewBox"))
         console.log("this._svgElement.getBBox().height: "+this._svgElement.getBBox().height)
-        
+     */   
         //console.log("svgElementWidth in Constructor of gameEnvironment: ",this._svgElement.getBBox())
 
         this.defsElement = document.createElementNS("http://www.w3.org/2000/svg", "defs");
@@ -165,40 +165,85 @@ class GameEnvironment{
 */
     drawBackground(){
         //console.log("drawingBackground")
-        this.label4.textContent = ("clientHeight: "+ document.getElementsByClassName("mainSVG").item(0)?.clientHeight+" viewBoxHeight: "+ this._viewBoxHeight.toFixed(0))
+        //this.label4.textContent = ("viewBoxValues: "+ document.getElementsByClassName("mainSVG").item(0)?.getAttribute("viewBox")+" _viewBoxWidth: "+ this._viewBoxWidth.toFixed(0))
+        //this.label3.textContent = ("_viewBoxLeft: "+this._viewBoxLeft)
         
         this.removeBackground()
 
-        // setzte den Abstand der Gitternetzlinien bis 100 auf 1px, zwischen 100 und 1000 auf 10px, zwischen 1000 und 10000 auf 100 px
-        // Logarythmus schein zu lahm zu laufen - die Linien werden zu eng bei großer Viewbox ab 5000
+        // setzte den Abstand der Gitternetzlinien bis viewBoxSize 100 auf 1, zwischen 100 und 1000 auf 10, zwischen 1000 und 10000 auf 100 px
+        // Logarythmus scheint zu lahm zu laufen - die Linien werden zu eng bei großer Viewbox ab 5000
         let spaceBetweenLines = Math.pow(10, Math.floor(Math.log10(this._viewBoxWidth/10)))
-        let path = document.createElementNS("http://www.w3.org/2000/svg", "path")
                     
         //console.log("viewBoxLeft"+ this._viewBoxLeft + "viewBoxWidth: " + this._viewBoxWidth)
         //this.label3.textContent = (spaceBetweenLines+"")
         
         //zeichne die vertikalen Linien
         for(let xPosition = Math.floor(this._viewBoxLeft); xPosition < this._viewBoxLeft + this._viewBoxWidth; xPosition++ ){ 
+            let path = document.createElementNS("http://www.w3.org/2000/svg", "path")
+            path.setAttribute("stroke", "beige")
+            path.setAttribute('vector-effect', 'non-scaling-stroke')
+            path.setAttribute("class", "bgPathElement")
+                    
+            // falls ein Bild eingefügt ist
             if(this.bgImage){ 
+                //console.log("vertical: bgImage is set: "+this.bgImage)
+                // xPosition is outside bgImage
                 if(xPosition % spaceBetweenLines == 0 && (xPosition < this.bgImage?.getBBox().x || xPosition > this.bgImage.getBBox().x+this.bgImage?.getBBox().width)){ 
                     path.setAttribute("d", `M ${xPosition} ${this._viewBoxTop} v ${this._viewBoxHeight}`)
-                    path.setAttribute("stroke", "beige")
-                    if((xPosition / spaceBetweenLines) % spaceBetweenLines == 0)
+                    
+                    if((xPosition / spaceBetweenLines) % spaceBetweenLines == 0){ 
                         path.setAttribute("stroke-width", `.5px`)
-                    else
+                    }
+                    else{ 
                         path.setAttribute("stroke-width", `.2px`)
-                    path.setAttribute('vector-effect', 'non-scaling-stroke')
-                    path.setAttribute("class", "bgPathElement")
+                    }
                     this._svgElement.appendChild(path)
+                }else{
+                    // xPosition inside bgImage
+                    // case bgImage top is visible in viewBox
+                    
+                    if(xPosition % spaceBetweenLines == 0 && this.bgImage.getBBox().y > this._viewBoxTop){
+                        path.setAttribute("d", `M${xPosition} ${this._viewBoxTop} V ${this.bgImage.getBBox().y}`)
+                        if(xPosition / spaceBetweenLines % spaceBetweenLines ==0){
+                            path.setAttribute("stroke-width", `.5px`)
+                        }else{
+                            path.setAttribute("stroke-width", `.2px`)
+                        }
+
+                        this._svgElement.appendChild(path)
+                        this.label1.textContent = (xPosition.toString())
+                    }
+                    // case bgImageBottom ist visible in viewBox
+                    //console.log("bgImageBottom ist visible in viewBox")
+                    if(xPosition % spaceBetweenLines == 0 && this.bgImage.getBBox().y + 
+                                                                this.bgImage.getBBox().height 
+                                                                < this.viewBoxTop + 
+                                                                    this.viewBoxHeight){
+                        path.setAttribute("d", `M${xPosition} ${this.bgImage.getBBox().y + this.bgImage.getBBox().height}
+                                                v ${this._viewBoxTop + this.viewBoxHeight - 
+                                                    this.bgImage.getBBox().y + this.bgImage.getBBox().height}`)
+                        if(xPosition/spaceBetweenLines%spaceBetweenLines == 0){
+                            path.setAttribute("stroke-width", `.5px`) 
+                        }else{
+                            path.setAttribute("stroke-width", ".2px")
+                        }
+
+                        this._svgElement.appendChild(path)   
+                        this.label2.textContent = (xPosition.toString())                      
+                    }
                 }
-            }else{
+            }else
+            // falls kein Bild eingefügt ist
+            {
                 if(xPosition % spaceBetweenLines == 0) { 
                     path.setAttribute("d", `M ${xPosition} ${this._viewBoxTop} v ${this._viewBoxHeight}`)
                     path.setAttribute("stroke", "beige")
-                    if((xPosition / spaceBetweenLines) % spaceBetweenLines == 0)
+                    if((xPosition / spaceBetweenLines) % spaceBetweenLines == 0){ 
                         path.setAttribute("stroke-width", `.5px`)
-                    else
+                    }
+                    else{ 
                         path.setAttribute("stroke-width", `.2px`)
+                    }
                     path.setAttribute('vector-effect', 'non-scaling-stroke')
                     path.setAttribute("class", "bgPathElement")
                     this._svgElement.appendChild(path)
@@ -207,39 +252,65 @@ class GameEnvironment{
         }
         // zeichne die horizontalen Linien
         for(let yPosition = Math.floor(this._viewBoxTop); yPosition < this.viewBoxTop + this.viewBoxHeight; yPosition++){
-            console.log(this.bgImage)
+            let path = document.createElementNS("http://www.w3.org/2000/svg", "path")
+            path.setAttribute("stroke", "beige")
+            path.setAttribute("vector-effect", "non-scaling-stroke")
+            path.setAttribute("class", "bgPathElement")
+                            
+           // falls ein Bild eingefügt ist
             if(this.bgImage){ 
-                
-                if(yPosition % spaceBetweenLines == 0 && (yPosition < this.bgImage.getBBox().y || yPosition > this.bgImage.getBBox().y+this.bgImage.getBBox().height)){
-                // console.log(spaceBetweenLines)
+                // yPosition is outside bgImage
+                if(yPosition % spaceBetweenLines == 0 && (yPosition < this.bgImage.getBBox().y || yPosition 
+                                                            > this.bgImage.getBBox().y+this.bgImage.getBBox().height)){
                     path.setAttribute("d", `M ${this.viewBoxLeft} ${yPosition} h ${this._viewBoxWidth}`)
-                    path.setAttribute("stroke", "beige")
                     if((yPosition / spaceBetweenLines) % spaceBetweenLines == 0){
-                        path.setAttribute("stroke-width", ".5px")}
+                        path.setAttribute("stroke-width", ".5px")
+                        }
                     else{
-                        path.setAttribute("stroke-width", `.2px`)}
-                    path.setAttribute("vector-effect", "non-scaling-stroke")
-                    path.setAttribute("class", "bgPathElement")
+                        path.setAttribute("stroke-width", `.2px`)
+                    }
                     this._svgElement.appendChild(path)
-                }else{
-                    if(yPosition % spaceBetweenLines == 0 && yPosition < this.bgImage.getBBox().y)
+                }else
+                // yPosition is inside bgImage
+                {   //left side of bgImage is visible
+                    if(yPosition % spaceBetweenLines == 0 && this.viewBoxLeft < this.bgImage.getBBox().x){ 
                         path.setAttribute("d", `M ${this._viewBoxLeft} ${yPosition} H ${this.bgImage.getBBox().x}`)
-
-                    if(yPosition % spaceBetweenLines == 0 && yPosition > this.bgImage.getBBox().y + this.bgImage.getBBox().width)
-                        path.setAttribute("d", `M ${this.bgImage.getBBox().x + this.bgImage.getBBox().width} H ${this._viewBoxLeft + this._viewBoxWidth}`)
+                        if((yPosition / spaceBetweenLines) % spaceBetweenLines == 0){
+                            path.setAttribute("stroke-width", ".5px")
+                            }
+                        else{
+                            path.setAttribute("stroke-width", `.2px`)
+                        }
+                        this._svgElement.appendChild(path)
+                    }
+                    // right side of image is visible
+                    if(yPosition % spaceBetweenLines == 0 && this.viewBoxLeft + this.viewBoxWidth 
+                                                                > this.bgImage.getBBox().x + this.bgImage.getBBox().width){ 
+                        this.label1.textContent = (this.bgImage.getBBox().x + this.bgImage.getBBox().width + " "+this._viewBoxLeft + this._viewBoxWidth)                                                                    
+                        path.setAttribute("d", `M ${this.bgImage.getBBox().x + this.bgImage.getBBox().width} 
+                                                    ${yPosition}
+                                                    H ${this._viewBoxLeft + this._viewBoxWidth}`)
+                        if(yPosition / spaceBetweenLines % spaceBetweenLines == 0){ 
+                            path.setAttribute("stroke-width", ".5px")}
+                            else{
+                            path.setAttribute("stroke-width", ".2px")
+                            }
+                        this._svgElement.appendChild(path)
+                    }
                 }
-            }else{
+            }else
+            //falls kein Bild eingefügt ist
+            {
+                
                 if(yPosition % spaceBetweenLines == 0){
                     // console.log(spaceBetweenLines)
-                        let path = document.createElementNS("http://www.w3.org/2000/svg", "path")
                         path.setAttribute("d", `M ${this.viewBoxLeft} ${yPosition} h ${this._viewBoxWidth}`)
-                        path.setAttribute("stroke", "beige")
                         if((yPosition / spaceBetweenLines) % spaceBetweenLines == 0){
-                            path.setAttribute("stroke-width", ".5px")}
+                            path.setAttribute("stroke-width", ".5px")
+                        }
                         else{
-                            path.setAttribute("stroke-width", `.2px`)}
-                        path.setAttribute("vector-effect", "non-scaling-stroke")
-                        path.setAttribute("class", "bgPathElement")
+                            path.setAttribute("stroke-width", `.2px`)
+                        }
                         this._svgElement.appendChild(path)
                     }
             }
@@ -357,7 +428,9 @@ class GameEnvironment{
     insertBackgroundPicture(){
         let imageFrame = document.createElementNS("http://www.w3.org/2000/svg", "path")
         this.bgImage = document.createElementNS("http://www.w3.org/2000/svg", "image");
-        this.bgImage.href.baseVal = "../resources/bgStars.png";
+        this.bgImage.href.baseVal = "../resources/spaceship.jpg";
+
+        console.log("loading image")
 
         this.bgImage.onload = () => {
             
@@ -366,12 +439,12 @@ class GameEnvironment{
             
             this.bgImage?.setAttribute("width","8000")
 
-            console.log("this.bgImage?.getBBox().width: "+this.bgImage?.getBBox().width)
+            /*console.log("this.bgImage?.getBBox().width: "+this.bgImage?.getBBox().width)
             console.log("this.bgImage?.getBBox().height: "+this.bgImage?.getBBox().height)
             console.log("this.bgImage?.width.baseVal.value: "+this.bgImage?.width.baseVal.value)
             console.log("this.bgImage?.getBBox().x: "+this.bgImage?.getBBox().x)
             console.log("this.bgImage?.getBBox().y: "+this.bgImage?.getBBox().y)
-            
+            */
             imageFrame.setAttribute("d",`M ${this.bgImage?.getBBox().x} ${this.bgImage?.getBBox().y}, 
                                         h${this.bgImage?.getBBox().width}, 
                                         v${this.bgImage?.getBBox().height}

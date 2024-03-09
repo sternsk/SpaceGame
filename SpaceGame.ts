@@ -53,11 +53,28 @@ class SpaceGame {
         this.windowing = "centered"
     }
 
+    
+    public init(){
+        /* füge die SVG Elemente der Spielfiguren ins gameEnvironment
+        this.objectMap.forEach((object, key) => {
+            if (object.svgElem){
+                this.gameEnvironment.svgElement.appendChild(object.svgElem);
+            }
+        });*/
+        // insert the gameEnvironment svg to svg Container
+        //this.gameEnvironment.insertBackgroundPicture()
+        document.getElementById('svgContainer')!.appendChild(this.gameEnvironment.svgElement);
+        this.gameEnvironment.insertBackgroundPicture()
+        this.start();
+        this.gameLoop();
+    }
+   
+
     async start() {
         while (this.actualMission === "") {
             this.actualMission = await this.gameEnvironment.missionSelection();
         }
-
+        console.log("mission selected")
         switch(this.actualMission){
             
             case`goddog`:
@@ -114,6 +131,7 @@ class SpaceGame {
         this.rocket.handleKeyboardInput(this.gameEnvironment.keyBoardController.getKeysPressed())
         
         //  this.background.refresh(this.objectMap);
+        this.rocket.setScale(this.gameEnvironment.viewBoxWidth/100)
         this.gameEnvironment.drawBackground()
         this.updateElements();
         
@@ -400,25 +418,6 @@ class SpaceGame {
     }
     
 
-    public init(){
-        /* füge die SVG Elemente der Spielfiguren ins gameEnvironment
-        this.objectMap.forEach((object, key) => {
-            if (object.svgElem){
-                this.gameEnvironment.svgElement.appendChild(object.svgElem);
-            }
-        });*/
-        // insert the gameEnvironment svg to svg Container
-        //this.gameEnvironment.insertBackgroundPicture()
-        document.getElementById('svgContainer')!.appendChild(this.gameEnvironment.svgElement);
-        console.log("in spacegame(init): this._svgElement.getBBox().height: "+this.gameEnvironment.svgElement.getBBox().height)
-        console.log("in spacegame(init): this._svgElement.getBBox().width: "+this.gameEnvironment.svgElement.getBBox().width)
-        console.log("in spacegame(init): this._svgElement.getBBox().height: "+this.gameEnvironment.svgElement.getBBox().x)
-        console.log("in spacegame(init): this._svgElement.getBBox().width: "+this.gameEnvironment.svgElement.getBBox().y)
-        console.log()
-        this.start();
-        this.gameLoop();
-    }
-   
     private updateElements(){
         // use a bulky form of typeassertion to avoid Typescript complaining "Property 'direction' does not exist on type 'never'."
         const selectionWithDirection = this.selection as { direction: { angle: number } };
