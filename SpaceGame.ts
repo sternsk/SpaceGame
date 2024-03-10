@@ -5,12 +5,12 @@ class SpaceGame {
     defaultMessageDuration = 5;
     
     mission: string[] = ["goddog", "behalf"]
-    actualMission: string = ""; //Testmission
+    actualMission: string = "collisionTest"; //Testmission
     windowing: string = "centered"; //preparing for different screenbehaviour
     dogProcessRunning = false;
     missionChoosen = false;
-    started = false
-    rocketAppeared = false
+    started = true
+    rocketAppeared = true
     message = false;
     messageCount = 0;
     dummy = new SpaceObject()
@@ -28,6 +28,7 @@ class SpaceGame {
     godPlanet: SpaceObject | null = null; 
     dogPlanet: SpaceObject | null = null;
     bromber: SpaceObject | null = null; 
+    meteor: SpaceObject[] = []
 
     // and a selected spaceObject to focus
     selection: SpaceObject;
@@ -76,6 +77,17 @@ class SpaceGame {
         }
         console.log("mission selected")
         switch(this.actualMission){
+            case`collisionTest`:
+                for(let i = 0; i<5; i++){
+                
+                    this.meteor[i] = new SpaceObject()
+                    this.meteor[i].position = (Vector.fromPoint({x:Math.random()*200-100, y:Math.random()*200-100}))
+                    this.meteor[i].velocity = new Vector(Math.random(), Math.random()*360)
+                    const svgElem = document.createElementNS("http://www.w3.org/2000/svg", "circle")
+                    svgElem.setAttribute("x", `${Math.random()}`)
+                    this.meteor[i].svgElem = [svgElem]
+                }
+
             
             case`goddog`:
                 
@@ -125,6 +137,12 @@ class SpaceGame {
         
         requestAnimationFrame(() => this.gameLoop());
         this.gameEnvironment.frameRateManager.update(); 
+        if(this.gameEnvironment.keyBoardController.isKeyPressed(`a`)){
+            this.gameEnvironment.viewBoxWidth -= this.gameEnvironment.viewBoxWidth/10
+        }
+        if(this.gameEnvironment.keyBoardController.isKeyPressed(`d`)){
+            this.gameEnvironment.viewBoxWidth += this.gameEnvironment.viewBoxWidth/10
+        }
 
         
         //if(this.actualMission)

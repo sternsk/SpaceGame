@@ -211,7 +211,6 @@ class GameEnvironment{
                         }
 
                         this._svgElement.appendChild(path)
-                        this.label1.textContent = (xPosition.toString())
                     }
                     // case bgImageBottom ist visible in viewBox
                     //console.log("bgImageBottom ist visible in viewBox")
@@ -229,7 +228,6 @@ class GameEnvironment{
                         }
 
                         this._svgElement.appendChild(path)   
-                        this.label2.textContent = (xPosition.toString())                      
                     }
                 }
             }else
@@ -286,7 +284,6 @@ class GameEnvironment{
                     // right side of image is visible
                     if(yPosition % spaceBetweenLines == 0 && this.viewBoxLeft + this.viewBoxWidth 
                                                                 > this.bgImage.getBBox().x + this.bgImage.getBBox().width){ 
-                        this.label1.textContent = (this.bgImage.getBBox().x + this.bgImage.getBBox().width + " "+this._viewBoxLeft + this._viewBoxWidth)                                                                    
                         path.setAttribute("d", `M ${this.bgImage.getBBox().x + this.bgImage.getBBox().width} 
                                                     ${yPosition}
                                                     H ${this._viewBoxLeft + this._viewBoxWidth}`)
@@ -362,6 +359,10 @@ class GameEnvironment{
 
     get viewBoxWidth(){
         return this._viewBoxWidth;
+    }
+
+    set viewBoxWidth(n:number){
+        this._viewBoxWidth = n;
     }
 
     get waitForDecision(): boolean{
