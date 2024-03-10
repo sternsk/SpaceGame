@@ -83,8 +83,13 @@ class SpaceGame {
                     this.meteor[i] = new SpaceObject()
                     this.meteor[i].position = (Vector.fromPoint({x:Math.random()*200-100, y:Math.random()*200-100}))
                     this.meteor[i].velocity = new Vector(Math.random(), Math.random()*360)
-                    const svgElem = document.createElementNS("http://www.w3.org/2000/svg", "circle")
-                    svgElem.setAttribute("x", `${Math.random()}`)
+                    const svgElem = document.createElementNS("http://www.w3.org/2000/svg", "rect")
+                    const meteorWidth = Math.random()*5+2
+                    const meteorHeight = Math.random()*10+2
+                    const meteorRotation = Math.random
+
+                    svgElem.setAttribute("x", `${this.meteor[i].position.x-meteorWidth/2}`)
+                    svgElem.setAttribute("y", `${this.meteor[i].position.x-meteorHeight/2}`)
                     this.meteor[i].svgElem = [svgElem]
                 }
 
