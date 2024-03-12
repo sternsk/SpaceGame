@@ -11,7 +11,7 @@ class GameEnvironment{
     private _viewBoxTop: number;
     private _viewBoxWidth: number;
     private _viewBoxHeight: number;
-    private bgImage?: SVGImageElement;
+    private _bgImage?: SVGImageElement;
     private defsElement: SVGDefsElement;
     private controlElements: HTMLElement[];
     missionSelector: HTMLSelectElement;
@@ -38,9 +38,9 @@ class GameEnvironment{
 
     constructor(){
         //initialisiere UserSpace
-        this._viewBoxLeft = -5500;
+        this._viewBoxLeft = -3500;
         this._viewBoxTop = -550;
-        this._viewBoxWidth = 1500;
+        this._viewBoxWidth = 8000;
     
         this._viewBoxHeight = 3/4 * this._viewBoxWidth; //viewBoxAttribuntes get overriden by svg-Size Attributes in css stylesheet
 
@@ -185,10 +185,10 @@ class GameEnvironment{
             path.setAttribute("class", "bgPathElement")
                     
             // falls ein Bild eingefügt ist
-            if(this.bgImage){ 
-                //console.log("vertical: bgImage is set: "+this.bgImage)
-                // xPosition is outside bgImage
-                if(xPosition % spaceBetweenLines == 0 && (xPosition < this.bgImage?.getBBox().x || xPosition > this.bgImage.getBBox().x+this.bgImage?.getBBox().width)){ 
+            if(this._bgImage){ 
+                //console.log("vertical: _bgImage is set: "+this._bgImage)
+                // xPosition is outside _bgImage
+                if(xPosition % spaceBetweenLines == 0 && (xPosition < this._bgImage?.getBBox().x || xPosition > this._bgImage.getBBox().x+this._bgImage?.getBBox().width)){ 
                     path.setAttribute("d", `M ${xPosition} ${this._viewBoxTop} v ${this._viewBoxHeight}`)
                     
                     if((xPosition / spaceBetweenLines) % spaceBetweenLines == 0){ 
@@ -199,11 +199,11 @@ class GameEnvironment{
                     }
                     this._svgElement.appendChild(path)
                 }else{
-                    // xPosition inside bgImage
-                    // case bgImage top is visible in viewBox
+                    // xPosition inside _bgImage
+                    // case _bgImage top is visible in viewBox
                     
-                    if(xPosition % spaceBetweenLines == 0 && this.bgImage.getBBox().y > this._viewBoxTop){
-                        path.setAttribute("d", `M${xPosition} ${this._viewBoxTop} V ${this.bgImage.getBBox().y}`)
+                    if(xPosition % spaceBetweenLines == 0 && this._bgImage.getBBox().y > this._viewBoxTop){
+                        path.setAttribute("d", `M${xPosition} ${this._viewBoxTop} V ${this._bgImage.getBBox().y}`)
                         if(xPosition / spaceBetweenLines % spaceBetweenLines ==0){
                             path.setAttribute("stroke-width", `.5px`)
                         }else{
@@ -212,15 +212,15 @@ class GameEnvironment{
 
                         this._svgElement.appendChild(path)
                     }
-                    // case bgImageBottom ist visible in viewBox
-                    //console.log("bgImageBottom ist visible in viewBox")
-                    if(xPosition % spaceBetweenLines == 0 && this.bgImage.getBBox().y + 
-                                                                this.bgImage.getBBox().height 
-                                                                < this.viewBoxTop + 
-                                                                    this.viewBoxHeight){
-                        path.setAttribute("d", `M${xPosition} ${this.bgImage.getBBox().y + this.bgImage.getBBox().height}
-                                                v ${this._viewBoxTop + this.viewBoxHeight - 
-                                                    this.bgImage.getBBox().y + this.bgImage.getBBox().height}`)
+                    // case _bgImageBottom ist visible in viewBox
+                    //console.log("_bgImageBottom ist visible in viewBox")
+                    if(xPosition % spaceBetweenLines == 0 && this._bgImage.getBBox().y + 
+                                                                this._bgImage.getBBox().height 
+                                                                < this._viewBoxTop + 
+                                                                    this._viewBoxHeight){
+                        path.setAttribute("d", `M${xPosition} ${this._bgImage.getBBox().y + this._bgImage.getBBox().height}
+                                                v ${this._viewBoxTop + this._viewBoxHeight - 
+                                                    this._bgImage.getBBox().y + this._bgImage.getBBox().height}`)
                         if(xPosition/spaceBetweenLines%spaceBetweenLines == 0){
                             path.setAttribute("stroke-width", `.5px`) 
                         }else{
@@ -256,10 +256,10 @@ class GameEnvironment{
             path.setAttribute("class", "bgPathElement")
                             
            // falls ein Bild eingefügt ist
-            if(this.bgImage){ 
-                // yPosition is outside bgImage
-                if(yPosition % spaceBetweenLines == 0 && (yPosition < this.bgImage.getBBox().y || yPosition 
-                                                            > this.bgImage.getBBox().y+this.bgImage.getBBox().height)){
+            if(this._bgImage){ 
+                // yPosition is outside _bgImage
+                if(yPosition % spaceBetweenLines == 0 && (yPosition < this._bgImage.getBBox().y || yPosition 
+                                                            > this._bgImage.getBBox().y+this._bgImage.getBBox().height)){
                     path.setAttribute("d", `M ${this.viewBoxLeft} ${yPosition} h ${this._viewBoxWidth}`)
                     if((yPosition / spaceBetweenLines) % spaceBetweenLines == 0){
                         path.setAttribute("stroke-width", ".5px")
@@ -269,10 +269,10 @@ class GameEnvironment{
                     }
                     this._svgElement.appendChild(path)
                 }else
-                // yPosition is inside bgImage
-                {   //left side of bgImage is visible
-                    if(yPosition % spaceBetweenLines == 0 && this.viewBoxLeft < this.bgImage.getBBox().x){ 
-                        path.setAttribute("d", `M ${this._viewBoxLeft} ${yPosition} H ${this.bgImage.getBBox().x}`)
+                // yPosition is inside _bgImage
+                {   //left side of _bgImage is visible
+                    if(yPosition % spaceBetweenLines == 0 && this.viewBoxLeft < this._bgImage.getBBox().x){ 
+                        path.setAttribute("d", `M ${this._viewBoxLeft} ${yPosition} H ${this._bgImage.getBBox().x}`)
                         if((yPosition / spaceBetweenLines) % spaceBetweenLines == 0){
                             path.setAttribute("stroke-width", ".5px")
                             }
@@ -283,8 +283,8 @@ class GameEnvironment{
                     }
                     // right side of image is visible
                     if(yPosition % spaceBetweenLines == 0 && this.viewBoxLeft + this.viewBoxWidth 
-                                                                > this.bgImage.getBBox().x + this.bgImage.getBBox().width){ 
-                        path.setAttribute("d", `M ${this.bgImage.getBBox().x + this.bgImage.getBBox().width} 
+                                                                > this._bgImage.getBBox().x + this._bgImage.getBBox().width){ 
+                        path.setAttribute("d", `M ${this._bgImage.getBBox().x + this._bgImage.getBBox().width} 
                                                     ${yPosition}
                                                     H ${this._viewBoxLeft + this._viewBoxWidth}`)
                         if(yPosition / spaceBetweenLines % spaceBetweenLines == 0){ 
@@ -325,6 +325,10 @@ class GameEnvironment{
     }
     getAspectRatio(): number{
         return(this._svgElement.getBBox().width / this._svgElement.getBBox().height);
+    }
+
+    get bgImage(): SVGImageElement | undefined{
+        return this._bgImage
     }
 
     get frameRateManager(): FrameRateManager{
@@ -428,36 +432,36 @@ class GameEnvironment{
 
     insertBackgroundPicture(){
         let imageFrame = document.createElementNS("http://www.w3.org/2000/svg", "path")
-        this.bgImage = document.createElementNS("http://www.w3.org/2000/svg", "image");
-        this.bgImage.href.baseVal = "../resources/spaceship.jpg";
+        this._bgImage = document.createElementNS("http://www.w3.org/2000/svg", "image");
+        this._bgImage.href.baseVal = "../resources/spaceship.jpg";
 
         console.log("loading image")
 
-        this.bgImage.onload = () => {
+        this._bgImage.onload = () => {
             
-            this.bgImage?.setAttribute("x", "-4000")
-            this.bgImage?.setAttribute("y", "-1500")
+            this._bgImage?.setAttribute("x", "-4000")
+            this._bgImage?.setAttribute("y", "-1500")
             
-            this.bgImage?.setAttribute("width","8000")
+            this._bgImage?.setAttribute("width","8000")
 
-            /*console.log("this.bgImage?.getBBox().width: "+this.bgImage?.getBBox().width)
-            console.log("this.bgImage?.getBBox().height: "+this.bgImage?.getBBox().height)
-            console.log("this.bgImage?.width.baseVal.value: "+this.bgImage?.width.baseVal.value)
-            console.log("this.bgImage?.getBBox().x: "+this.bgImage?.getBBox().x)
-            console.log("this.bgImage?.getBBox().y: "+this.bgImage?.getBBox().y)
+            /*console.log("this._bgImage?.getBBox().width: "+this._bgImage?.getBBox().width)
+            console.log("this._bgImage?.getBBox().height: "+this._bgImage?.getBBox().height)
+            console.log("this._bgImage?.width.baseVal.value: "+this._bgImage?.width.baseVal.value)
+            console.log("this._bgImage?.getBBox().x: "+this._bgImage?.getBBox().x)
+            console.log("this._bgImage?.getBBox().y: "+this._bgImage?.getBBox().y)
             */
-            imageFrame.setAttribute("d",`M ${this.bgImage?.getBBox().x} ${this.bgImage?.getBBox().y}, 
-                                        h${this.bgImage?.getBBox().width}, 
-                                        v${this.bgImage?.getBBox().height}
-                                        h${-this.bgImage!.getBBox().width}, 
+            imageFrame.setAttribute("d",`M ${this._bgImage?.getBBox().x} ${this._bgImage?.getBBox().y}, 
+                                        h${this._bgImage?.getBBox().width}, 
+                                        v${this._bgImage?.getBBox().height}
+                                        h${-this._bgImage!.getBBox().width}, 
                                         z`)
             imageFrame.setAttribute("fill", "none")
-            imageFrame.setAttribute("stroke", "brown")
+            imageFrame.setAttribute("stroke", "grey")
             imageFrame.setAttribute("stroke-width", "2px")
             imageFrame.setAttribute("vector-effect", "non-scaling-stroke")
             
         }
-        this.svgElement.appendChild(this.bgImage)
+        this.svgElement.appendChild(this._bgImage)
         this.svgElement.appendChild(imageFrame)
 
     }

@@ -156,6 +156,12 @@ class SpaceObject {
         else return null;
     }    
 
+    addToGElem(svgElem: SVGElement) {
+        if(!this.gElement)
+            this.gElement = document.createElementNS("http://www.w3.org/2000/svg", "g")
+        this.gElement.appendChild(svgElem)
+    }
+
     get svgElem(): SVGElement[] | null{
         if(this._svgElement)
             return this._svgElement

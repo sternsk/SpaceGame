@@ -415,16 +415,19 @@ class RainbowRocket extends SpaceObject {
         super.handleKeyboardInput(keysPressed)
         if (keysPressed[' ']) {
             this.animateSummit()
-            let summitShit: SVGPathElement = document.createElementNS("http://www.w3.org/2000/svg", "path")
+            
+            //lets get the rocket leave a trail
+            //let summitShit: SVGPathElement = document.createElementNS("http://www.w3.org/2000/svg", "path")
+            
             let svgElem = document.getElementsByClassName("mainSVG").item(0) as SVGSVGElement
 
-            summitShit.setAttribute("d", `M ${this._position.x + this.summitballX} ${this.position.y + this.summitballY} v10`)
+       /*     summitShit.setAttribute("d", `M ${this._position.x + this.summitballX} ${this.position.y + this.summitballY} v10`)
             summitShit.setAttribute("stroke", "brown")
             summitShit.setAttribute("stroke-width", "10px")
             summitShit.setAttribute("class", "summitShit")
             
             svgElem?.appendChild(summitShit)
-           
+         */  
         }
         if(keysPressed[`ArrowUp`]){
             this.propulsionFire()    
