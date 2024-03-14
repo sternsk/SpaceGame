@@ -416,10 +416,11 @@ class RainbowRocket extends SpaceObject {
         if (keysPressed[' ']) {
             this.animateSummit()
             let summitShit: SVGPathElement = document.createElementNS("http://www.w3.org/2000/svg", "path")
+
             let svgElem = document.getElementsByClassName("mainSVG").item(0) as SVGSVGElement
 
             summitShit.setAttribute("d", `M ${this._position.x + this.summitballX} ${this.position.y + this.summitballY} v10`)
-            summitShit.setAttribute("stroke", "brown")
+            summitShit.setAttribute("stroke", `rgb(${Math.random()*255}, ${Math.random()*255}, ${Math.random()*255})`)
             summitShit.setAttribute("stroke-width", "10px")
             summitShit.setAttribute("class", "summitShit")
             
@@ -429,7 +430,7 @@ class RainbowRocket extends SpaceObject {
         if(keysPressed[`ArrowUp`]){
             this.propulsionFire()    
         }
-        else{
+        else{  
             let fire = document.getElementById("fire")
             fire?.setAttribute("display", "none")
         }

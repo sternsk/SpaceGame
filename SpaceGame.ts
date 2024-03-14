@@ -132,7 +132,7 @@ class SpaceGame {
         
         //  this.background.refresh(this.objectMap);
         this.rocket.setScale(this.gameEnvironment.viewBoxWidth/100)
-        this.gameEnvironment.drawBackground()
+        
         this.updateElements();
         
         switch(this.windowing){
@@ -156,7 +156,7 @@ class SpaceGame {
                 this.dummy.rotation += 1;
                 this.dummy.update()
 
-                
+                this.gameEnvironment.drawBackground()
                 
                 if(!this.rocketAppeared)
                     this.rocket.rotation += .1
@@ -311,7 +311,7 @@ class SpaceGame {
 
                 if( this.messageCount == 8 && this.message && this.decision == "Ja"){
                     this.message = false;
-                    this.gameEnvironment.windowSmoothly("parabolic", 3, 800, this.rocket.position, 1)
+                    this.gameEnvironment.windowSmoothly("parabolic", 3, 500, this.rocket.position, 1)
                     this.windowing = "centered"
                     this.gameEnvironment.setMessage(`Ok, der blaue Pfeil, der die Richtung der Rakete anzeigte, zeigt nun auf das Schiff, 
                                                     das wir erreichen wollen. Je größer der Pfeil, desto näher das Schiff! Auf gehts Commander, 
