@@ -38,9 +38,9 @@ class GameEnvironment{
 
     constructor(){
         //initialisiere UserSpace
-        this._viewBoxLeft = -3500;
-        this._viewBoxTop = -550;
-        this._viewBoxWidth = 8000;
+        this._viewBoxLeft = -300;
+        this._viewBoxTop = -200;
+        this._viewBoxWidth = 1200;
     
         this._viewBoxHeight = 3/4 * this._viewBoxWidth; //viewBoxAttribuntes get overriden by svg-Size Attributes in css stylesheet
 
@@ -100,7 +100,7 @@ class GameEnvironment{
         
         document.getElementById('controlContainer')!.appendChild(this.label1);
         document.getElementById('controlContainer')!.appendChild(this.label2);
-        document.getElementById('controlContainer')!.appendChild(this.missionSelector);
+       // document.getElementById('controlContainer')!.appendChild(this.missionSelector);
         document.getElementById('controlContainer')!.appendChild(this.label3);
         document.getElementById('controlContainer')!.appendChild(this.arrowBox1);
         document.getElementById('controlContainer')!.appendChild(this.label4);
@@ -439,10 +439,10 @@ class GameEnvironment{
 
         this._bgImage.onload = () => {
             
-            this._bgImage?.setAttribute("x", "-4000")
-            this._bgImage?.setAttribute("y", "-1500")
+            this._bgImage?.setAttribute("x", "-400")
+            this._bgImage?.setAttribute("y", "-150")
             
-            this._bgImage?.setAttribute("width","8000")
+            this._bgImage?.setAttribute("width","800")
 
             /*console.log("this._bgImage?.getBBox().width: "+this._bgImage?.getBBox().width)
             console.log("this._bgImage?.getBBox().height: "+this._bgImage?.getBBox().height)

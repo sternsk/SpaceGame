@@ -30,7 +30,7 @@ class RainbowRocket extends SpaceObject {
     private innerFlameSpire2LeftPath = {x: 1, y:4.5}
     private innerFlameSpire2RightPathControlPoint = {x:1.5 , y:3.5}
 
-    
+    private _summits = false;
     
     // Constructor overload without parameters
     constructor();
@@ -381,7 +381,7 @@ class RainbowRocket extends SpaceObject {
         summit.setAttribute("x2", "0");
         summit.setAttribute("y2", "-10");
         summit.setAttribute("stroke", "grey");
-        summit.setAttribute("stroke-width", "1");
+        summit.setAttribute("stroke-width", ".1");
         this._svgElement?.push(summit)
         g.appendChild(summit);
 
@@ -406,6 +406,10 @@ class RainbowRocket extends SpaceObject {
         return stop;
     }
 
+    get summits(): boolean{
+        return this._summits
+    }
+
     update(){
         super.update()
         this.animateInnerFire()
@@ -415,7 +419,7 @@ class RainbowRocket extends SpaceObject {
         super.handleKeyboardInput(keysPressed)
         if (keysPressed[' ']) {
             this.animateSummit()
-            
+            this._summits = true;
             //lets get the rocket leave a trail
             //let summitShit: SVGPathElement = document.createElementNS("http://www.w3.org/2000/svg", "path")
             
@@ -428,6 +432,8 @@ class RainbowRocket extends SpaceObject {
             
             svgElem?.appendChild(summitShit)
          */  
+        }else{
+            this._summits = false
         }
         if(keysPressed[`ArrowUp`]){
             this.propulsionFire()    

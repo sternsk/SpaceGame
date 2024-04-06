@@ -38,10 +38,10 @@ class SpaceGame {
 
     constructor() {
         this.rocket = new RainbowRocket();
-        this.rocket.position = Vector.fromPoint ({x: 0, y:100})
+        this.rocket.position = Vector.fromPoint ({x: 0, y:500})
         this.rocket.direction = Vector.fromPoint({x:1, y:-1})
         this.objectMap.set(`rokket`, this.rocket)
-        this.rocket.setScale(5);
+        this.rocket.setScale(.5);
 
         
         
@@ -84,18 +84,20 @@ class SpaceGame {
                 if(this.gameEnvironment.bgImage){ 
                     const bgImage = this.gameEnvironment.bgImage
 
-                    for(let i = 0; i<100; i++){
+                    for(let i = 0; i<10; i++){
                     
                         this.meteor[i] = new SpaceObject()
-                        this.meteor[i].position = (Vector.fromPoint({x: Math.random()*2000-4000, y: Math.random()*2000-4000}))
+                        this.meteor[i].position = Vector.fromPoint({x:50000,y:10000})//(Vector.fromPoint({x: Math.random()*2000-4000, y: Math.random()*2000-4000}))
                         this.meteor[i].velocity = new Vector(Math.random()*5, Math.random()*360)
+                        this.meteor[i].setScale(5)
                         
                         this.objectMap.set("meteor"+i.toString(), this.meteor[i])
                         
                         const svgElem = document.createElementNS("http://www.w3.org/2000/svg", "rect")
-                        const meteorWidth = Math.random()*50+200
-                        const meteorHeight = Math.random()*100+200
+                        const meteorWidth = Math.random()*5+5
+                        const meteorHeight = Math.random()*5+5
                         const meteorRotation = Math.random()
+                
 
                         this.meteor[i].rotation = meteorRotation
 
@@ -118,17 +120,18 @@ class SpaceGame {
                         
                     }
                 }                
-                
+               
             case`goddog`:
                 
                 this.godPlanet = new SpaceObject(
-                Vector.fromPoint({x:0,y:3500}),          //Position
+                Vector.fromPoint({x:-150,y:450}),          //Position
                 new Vector(0,0),                       //velocity
                 new Vector(1,0),                    //direction
                 .3,                                 //rotation
                 undefined,                          //svgElement
                 "../resources/gravityPlanet07.png" 
                 )
+                this.godPlanet.setScale(.3);  
                 
                 this.dogPlanet = new SpaceObject(
                 this.godPlanet.position,          //position
@@ -143,7 +146,7 @@ class SpaceGame {
                 
                 //Der soll später Motorradgeräusche machen
                 this.bromber = new SpaceObject(
-                    Vector.fromPoint({x: 1000, y:100}),
+                    Vector.fromPoint({x: 200, y:100}),
                     new Vector(0,0),
                     Vector.fromLengthAndAngle(1,75),
                     0,
@@ -223,6 +226,18 @@ class SpaceGame {
                 }, 8000)
                 if(this.rocket.svgElem){ 
                     this.gameEnvironment.playIntro(this.rocket.svgElem)
+                }
+            break;
+
+            case `collisionTest`:
+           
+                if (this.rocket.summits){ 
+                    this.objectMap.forEach((object, key) =>{
+                        if(key.includes("meteor") && object.scale < 5){
+                            object.setScale(object.scale + .1)
+                            
+                        }
+                    })
                 }
             break;
 
@@ -474,8 +489,30 @@ class SpaceGame {
 
         let arrow2Direction;
         let arrow2ScaleFactor; 
+
+        // let god Planet be appended first
+        if(this.godPlanet){ 
+            if(this.godPlanet.defsElem)
+                this.gameEnvironment.svgElement.appendChild(this.godPlanet.defsElem)
+            if(this.godPlanet.gElem)
+                this.gameEnvironment.svgElement.appendChild(this.godPlanet.gElem)
+        }
         this.objectMap.forEach((object, key) => {
+
             object.update()
+            
+            if(this.godPlanet){ 
+                if(key != "godPlanet" && object.distance(this.godPlanet.position) < 100 && object.distance(this.godPlanet.position) > 10){
+                    object.setScale(object.scale * object.distance(this.godPlanet.position) / 100)
+                }
+
+                //dispose the object
+       /*         if(object.scale < .01){
+                    object = null
+                }
+                */
+          
+            }
 
             //check if the meteors are still inside the frame, otherwise place them inside again
             if(this.gameEnvironment.bgImage && key.includes("meteor")){
@@ -497,18 +534,20 @@ class SpaceGame {
                                                         y: this.gameEnvironment.bgImage.getBBox().y})
                 }
             }
-            //be sure rockets svg is appended at last
-            if(key !="rokket"){ 
+            //be sure rockets svg is appended at last and planet are already appended
+            if(key !="rokket" && key !="godPlanet"){ 
                 if(object.defsElem)
                     this.gameEnvironment.svgElement.appendChild(object.defsElem)
                 if(object.gElem)
                     this.gameEnvironment.svgElement.appendChild(object.gElem)
-            }            
+            }
+                 
         })
+
         if(this.rocket.defsElem)
-                    this.gameEnvironment.svgElement.appendChild(this.rocket.defsElem)
-                if(this.rocket.gElem)
-                    this.gameEnvironment.svgElement.appendChild(this.rocket.gElem)
+            this.gameEnvironment.svgElement.appendChild(this.rocket.defsElem)
+         if(this.rocket.gElem)
+            this.gameEnvironment.svgElement.appendChild(this.rocket.gElem)
         /*
         this.objectMap.forEach((object, key) => {
             if(key != "rokket"){
@@ -530,17 +569,13 @@ class SpaceGame {
         this.gameEnvironment.svgElement.appendChild(this.rocket.gElem!);
         */
         //this.bromber!.rotationPivot = {x:100, y:100}
-
-        //this.gameEnvironment.setLabel1(`ViewBoxWidth: ${this.gameEnvironment.viewBoxWidth}, viewBoxHeight: ${this.gameEnvironment.viewBoxHeight}`)
-        //this.gameEnvironment.setLabel2(`ViewBoxWidth: ${this.gameEnvironment.viewBoxWidth}, viewBoxHeight: ${this.gameEnvironment.viewBoxHeight}`) //Die Verwendung von Backticks (`) anstelle von einfachen oder doppelten Anführungszeichen ermöglicht die direkte Einfügung von JavaScript-Ausdrücken innerhalb der Zeichenkette. Beide Methoden erreichen dasselbe Ziel, aber der zweite Ausdruck mit Template Literal ist in der Regel leserlicher und einfacher zu handhaben, besonders wenn komplexe Ausdrücke oder mehrere Variablen eingefügt werden müssen. Template Literals bieten auch eine verbesserte Lesbarkeit, da sie mehrzeilige Zeichenketten unterstützen, ohne dass Escape-Zeichen erforderlich sind.
-        //this.gameEnvironment.setLabel3()
-    
+/*
         this.gameEnvironment.setLabel1("number of meteors: "+ this.meteor.length)
-        this.gameEnvironment.setLabel2("meteor 1 x:"+this.meteor[0].position.x.toFixed(0) +" y: "+this.meteor[0].position.y.toFixed(0))
+        this.gameEnvironment.setLabel2("viewBoxWidth:"+this.gameEnvironment.viewBoxWidth)
         this.gameEnvironment.setLabel3("rocket position x: "+this.rocket.position.x.toFixed(0) + "y: "+this.rocket.position.y.toFixed(0))
         this.gameEnvironment.setLabel4("distance to meteor1: "+this.rocket.distance(this.meteor[0].position).toFixed(0))
         this.gameEnvironment.setArrow1(this.rocket.velocity.angle + 90, this.rocket.velocity.length)
-        
+   */     
         if(this.selection == this.rocket && this.actualMission){
             this.gameEnvironment.setArrow2(this.selection.direction.angle + 90, 1)
             //this.gameEnvironment.setLabel4(`Bromber Position: ${this.bromber?.position.x}, ${this.bromber?.position.y}`);

@@ -171,7 +171,11 @@ class SpaceObject {
     set svgElem(elem: SVGElement[]){
         this._svgElement = elem
     }
-    
+    /*
+    dispose(){
+        this = null;
+    }
+    */
     // Behandeln von Keyboard-Eingaben in SpaceObjects
     handleKeyboardInput(keysPressed: {[key: string]: boolean}) {
         if (keysPressed['ArrowLeft']) {
