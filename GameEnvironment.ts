@@ -52,6 +52,8 @@ class GameEnvironment{
         const option = document.createElement("option")
         option.value = "";
         option.textContent = "choose Mission"
+        option.disabled = true;
+        option.selected = true;
         this.missionSelector.appendChild(option)
         
         this.label1 = document.createElement("div");
@@ -100,7 +102,7 @@ class GameEnvironment{
         
         document.getElementById('controlContainer')!.appendChild(this.label1);
         document.getElementById('controlContainer')!.appendChild(this.label2);
-       // document.getElementById('controlContainer')!.appendChild(this.missionSelector);
+        document.getElementById('controlContainer')!.appendChild(this.missionSelector);
         document.getElementById('controlContainer')!.appendChild(this.label3);
         document.getElementById('controlContainer')!.appendChild(this.arrowBox1);
         document.getElementById('controlContainer')!.appendChild(this.label4);

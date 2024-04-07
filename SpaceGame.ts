@@ -1,16 +1,20 @@
+
 class SpaceGame {
+    rocketId = idInputElement.value;
+    idInputElement = document.getElementById(`rocketId`)! as HTMLInputElement
+
     gameEnvironment= new GameEnvironment();
     
     //allocate controlvariables for possible missions
     defaultMessageDuration = 5;
     
-    mission: string[] = ["goddog", "behalf"]
-    actualMission: string = "collisionTest"; //Testmission
+    mission: string[] = ["goddog", "behalf", "collisionTest"]
+    actualMission: string = ""; //Testmission
     windowing: string = "centered"; //preparing for different screenbehaviour
     dogProcessRunning = false;
     missionChoosen = false;
-    started = true
-    rocketAppeared = true
+    started = false
+    rocketAppeared = false
     message = false;
     messageCount = 0;
     dummy = new SpaceObject()
@@ -51,7 +55,7 @@ class SpaceGame {
         this.mission.forEach((object) =>{
             this.gameEnvironment.addOption(this.gameEnvironment.missionSelector, object)
         })
-        this.windowing = ""
+        this.windowing = "centered"
     }
 
     
@@ -220,7 +224,7 @@ class SpaceGame {
                         }
                     }
                     if(!this.rocketAppeared)
-                        this.gameEnvironment.setMessage("Welcome to Space Patrol. Commander Samejon!", 2, 0, (showm) =>{})
+                        this.gameEnvironment.setMessage(`Welcome to Space Patrol. Commander ${this.rocketId}!`, 2, 0, (showm) =>{})
                     this.rocketAppeared = true
                     
                 }, 8000)
@@ -596,10 +600,8 @@ class SpaceGame {
     }
 }
 
+console.log("SpaceGame loads")
+const game = new SpaceGame();
+game.init(); // Aufruf der init-Methode, um das Spiel zu starten
 
-// Initialisiere das Spiel, wenn die Seite geladen ist
-window.onload = () => {
-    const game = new SpaceGame();
-    game.init(); // Aufruf der init-Methode, um das Spiel zu starten
-};
 
