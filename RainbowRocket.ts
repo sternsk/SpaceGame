@@ -1,35 +1,5 @@
-class RainbowRocket extends SpaceObject {
+class RainbowRocket extends Spacecraft {
     
-    private svgNS = "http://www.w3.org/2000/svg";
-    private wingLeft: SVGPathElement = document.createElementNS(this.svgNS, "path") as SVGPathElement;
-    private wingRight: SVGPathElement = document.createElementNS(this.svgNS, "path") as SVGPathElement;
-    private summitball: SVGPathElement = document.createElementNS("http://www.w3.org/2000/svg", "path")
-    private summitballX: number = 0
-    private summitballY: number = -10
-
-    //preparing values for the animation of the propulsion fire
-    // initiate an Array with propulsion fire data as attractor to prevent wild fireing
-    private needAChange = true
-    private flameSpire1LeftPathControlPoint = {x:-3, y:5}   //[0][0].x
-    private flameSpire1LeftPath = {x: -2, y: 8}             ////[0][1] [0][1].y
-    private flameSpire1RightPathControlPoint = {x:-1, y:7}
-    private flameSpire1RightPath = {x: -1, y: 6}            //[1]
-    private flameSpire2LeftPathControlPoint = {x:-1, y:7.5}
-    private flameSpire2LeftPath = {x: 0, y: 9}              //[2]
-    private flameSpire2RightPathControlPoint = {x:1, y:7.5}
-    private flameSpire2RightPath = {x: 1, y: 6}             //[3]
-    private flameSpire3LeftPathControlPoint = {x:1, y:7}
-    private flameSpire3LeftPath = {x: 2, y: 8}              //[4]
-    private flameSpire3RightPathControlPoint = {x:3, y:5}   //[5]
-
-    private innerFlameSpire1LeftPathControlPoint = {x: -1.5 , y:2.5}
-    private innerFlameSpire1LeftPath = {x: -1, y:4.5}
-    private innerFlameSpire1RightPathControlPoint = {x:-.5 , y:4.5}
-    private innerFlameSpire1RightPath = {x: 0, y:3}
-    private innerFlameSpire2LeftPathControlPoint = {x:.5 , y:4}
-    private innerFlameSpire2LeftPath = {x: 1, y:4.5}
-    private innerFlameSpire2RightPathControlPoint = {x:1.5 , y:3.5}
-
     private _summits = false;
     
     // Constructor overload without parameters
@@ -47,15 +17,16 @@ class RainbowRocket extends SpaceObject {
 
     // Actual constructor implementation
     constructor(
-        position: Vector = Vector.fromPoint({x:0, y:0}), 
+       /* position: Vector = Vector.fromPoint({x:0, y:0}), 
         velocity: Vector = Vector.fromPoint({x:0,y:0}), 
         direction: Vector = new Vector(1, 0),
         rotation: number = 0, 
         gElement?: SVGGElement,
-        imageUrl?: string
-    ) {
+        imageUrl?: string*/
+                ) {
         // Call the super constructor with the provided parameters if they exist
-        super(position, velocity, direction, rotation, gElement, imageUrl);
+        super(/*position, velocity, direction, rotation, gElement, imageUrl*/
+                );
         
         // Additional initialization specific to RainbowRocket
         this._svgElement = [];
@@ -258,144 +229,7 @@ class RainbowRocket extends SpaceObject {
         })
         
     } 
-    private createRocketSvg(): SVGGElement {
-                
-        // Erstelle das <g>-Element für die Rakete
-        const g = document.createElementNS(this.svgNS, "g") as unknown as SVGGElement;
-        g.setAttribute("fill", "url(#gradient1)");
-        
-        
-        this.wingLeft.setAttribute("id", "wingLeft");
-        this.wingLeft.setAttribute("d", "M-2 -3 q-1.5 1, -2 3 q1 -0.5, 2 -1z");
-        this.wingLeft.setAttribute("fill", "darkslateblue");
-        this._svgElement?.push(this.wingLeft)
 
-        g.appendChild(this.wingLeft);
-        
-
-        this.wingRight.setAttribute("id", "wingRight");
-        this.wingRight.setAttribute("d", "M 2 -3 q 1.5 1, 2 3 q-1 -0.5, -2 -1z");
-        this.wingRight.setAttribute("fill", "url(#gradient2)");
-        this._svgElement?.push(this.wingRight)
-        g.appendChild(this.wingRight);
-
-        const fire = document.createElementNS(this.svgNS, "path") as SVGPathElement;
-
-        fire.setAttribute("id", "fire");
-        fire.setAttribute("d", `M -2 2 
-                                Q ${this.flameSpire1LeftPathControlPoint.x}
-                                    ${this.flameSpire1LeftPathControlPoint.y}, 
-                                    ${this.flameSpire1LeftPath.x}
-                                    ${this.flameSpire1LeftPath.y} 
-                                
-                                Q ${this.flameSpire1RightPathControlPoint.x}
-                                    ${this.flameSpire1RightPathControlPoint.y}, 
-                                    ${this.flameSpire1RightPath.x}
-                                    ${this.flameSpire1RightPath.y} 
-                                
-                                Q ${this.flameSpire2LeftPathControlPoint.x}
-                                    ${this.flameSpire2LeftPathControlPoint.y},
-                                    ${this.flameSpire2LeftPath.x}
-                                    ${this.flameSpire2LeftPath.y} 
-                                
-                                Q ${this.flameSpire2RightPathControlPoint.x}
-                                    ${this.flameSpire2RightPathControlPoint.y}, 
-                                    ${this.flameSpire2RightPath.x}
-                                    ${this.flameSpire2RightPath.y} 
-                                
-                                Q ${this.flameSpire3LeftPathControlPoint.x} 
-                                    ${this.flameSpire3LeftPathControlPoint.y}, 
-                                    ${this.flameSpire3LeftPath.x}
-                                    ${this.flameSpire3LeftPath.y}
-                                
-                                Q ${this.flameSpire3RightPathControlPoint.x}
-                                    ${this.flameSpire3RightPathControlPoint.y}, 
-                                    2 
-                                    2
-                                 
-                                q -2 -0.5, -4 0 `);
-
-        fire.setAttribute("fill", "url(#gradient2");
-        fire.setAttribute("display", "block")
-        this._svgElement?.push(fire)
-        g.appendChild(fire);
-
-        const innerfire = document.createElementNS(this.svgNS, "path") as SVGPathElement;
-        innerfire.setAttribute("id", "innerfire");
-        innerfire.setAttribute("d", `M-1 1.5 
-                                        Q ${this.innerFlameSpire1LeftPathControlPoint.x}  
-                                            ${this.innerFlameSpire1LeftPathControlPoint.y} , 
-                                            ${this.innerFlameSpire1LeftPath.x} 
-                                            ${this.innerFlameSpire1LeftPath.y}   
-                                        Q   ${this.innerFlameSpire1RightPathControlPoint.x}  
-                                            ${this.innerFlameSpire1RightPathControlPoint.y} , 
-                                            ${this.innerFlameSpire1RightPath.x} 
-                                            ${this.innerFlameSpire1RightPath.y}  
-                                        Q ${this.innerFlameSpire2LeftPathControlPoint.x} 
-                                            ${this.innerFlameSpire2LeftPathControlPoint.y} , 
-                                            ${this.innerFlameSpire2LeftPath.x}
-                                            ${this.innerFlameSpire2LeftPath.y} 
-                                        Q ${this.innerFlameSpire2RightPathControlPoint.x} 
-                                            ${this.innerFlameSpire2RightPathControlPoint.x}, 
-                                            1
-                                            1.5`);
-        innerfire.setAttribute("fill", "orange");
-        this._svgElement?.push(innerfire)
-        g.appendChild(innerfire);
-
-        const body = document.createElementNS(this.svgNS, "path") as SVGPathElement;
-        body.setAttribute("id", "body");
-        body.setAttribute("d", "M-2-4 q-1 3,  0 6 q 2 -.5, 4 0 q 1 -3,  0 -6 q -2 -0.5, -4 0 ");
-        body.setAttribute("stroke", "black");
-        body.setAttribute("stroke-width", ".1px");
-        body.setAttribute("fill", "url(#gradient1)");
-        body.setAttribute("vector-effect", "non-scaling-stroke");
-        this._svgElement?.push(body)
-        g.appendChild(body);
-
-        const top = document.createElementNS(this.svgNS, "path") as SVGPathElement;
-        top.setAttribute("id", "top");
-        top.setAttribute("d", "M -2 -4 q .5 -2, 2 -4 q 1.5 2, 2 4 q-2 -0.5, -4 0");
-        top.setAttribute("fill", "url(#gradient2");
-        this._svgElement?.push(top)
-        g.appendChild(top);
-
-        const topwindow = document.createElementNS(this.svgNS, "path") as SVGPathElement;
-        topwindow.setAttribute("id", "topwindow");
-        topwindow.setAttribute("d", "M -1 -5 q .75 -.75, 1 -1 q .75 .75, 1 1 q -1 -.25, -2 0");
-        topwindow.setAttribute("fill", "darkslateblue");
-        this._svgElement?.push(topwindow)
-        g.appendChild(topwindow);
-
-        const middlewindow = document.createElementNS(this.svgNS, "path") as SVGPathElement;
-        middlewindow.setAttribute("id", "middlewindow");
-        middlewindow.setAttribute("d", "M-1 -3 q -.5 2, 0 4 q .5 .15, 1 0 q -.5 -2, 0 -4 q -.5 -.15, -1 0");
-        middlewindow.setAttribute("fill", "darkslateblue");
-        this._svgElement?.push(middlewindow)
-        g.appendChild(middlewindow);
-
-        const summit = document.createElementNS(this.svgNS, "line") as SVGPathElement;
-        summit.setAttribute("id", "summit");
-        summit.setAttribute("x1", "0");
-        summit.setAttribute("y1", "-8");
-        summit.setAttribute("x2", "0");
-        summit.setAttribute("y2", "-10");
-        summit.setAttribute("stroke", "grey");
-        summit.setAttribute("stroke-width", ".1");
-        this._svgElement?.push(summit)
-        g.appendChild(summit);
-
-        this.summitball = document.createElementNS(this.svgNS, "circle") as SVGPathElement;
-        this.summitball.setAttribute("id", "summitBall")
-        this.summitball.setAttribute("cx", "0");
-        this.summitball.setAttribute("cy", "-10");
-        this.summitball.setAttribute("r", ".2");
-        this.summitball.setAttribute("fill", "orange");
-        this._svgElement?.push(this.summitball)
-        g.appendChild(this.summitball);
-        
-        return g;
-    }
     private createStop(offset: string, stopColor: string, stopOpacity?: string): SVGStopElement {
         const stop = document.createElementNS("http://www.w3.org/2000/svg", "stop") as SVGStopElement;
         stop.setAttribute("offset", offset);
