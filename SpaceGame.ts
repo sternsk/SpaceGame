@@ -1,5 +1,8 @@
+import { RainbowRocket } from "./RainbowRocket";
+import { idInputElement} from "./startGame";
+import { GameEnvironment } from "./GameEnvironment";
 
-class SpaceGame {
+export class SpaceGame {
     rocketId = idInputElement.value;
     idInputElement = document.getElementById(`rocketId`)! as HTMLInputElement
 

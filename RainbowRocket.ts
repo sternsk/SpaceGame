@@ -1,4 +1,6 @@
-class RainbowRocket extends Spacecraft {
+import { Spacecraft } from "./Spacecraft";
+
+export class RainbowRocket extends Spacecraft {
     
     private _summits = false;
     

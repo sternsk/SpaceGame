@@ -1,4 +1,8 @@
-class Spacecraft extends SpaceObject{
+import {idInputElement} from "./startGame";
+import {colorSelector} from "./startGame";
+import {typeSelector} from "./startGame";
+
+export class Spacecraft extends SpaceObject{
     private id: string = idInputElement.value
     private color: string = colorSelector.value
     private type: string = typeSelector.value       
@@ -229,9 +233,35 @@ class Spacecraft extends SpaceObject{
 
     static getCraftGElement(type: string): SVGGElement{
         switch(type){
-            case`rokket`:
+            case`Rainbow Rocket`:
                 let rokket = new Spacecraft()
                 return (rokket.createRocketSvg());
+        
+            case`rokket`:
+                let gElement = document.createElementNS("http://www.w3.org/2000/svg", "g")
+                let outline = document.createElementNS("http://www.w3.org/2000/svg", "path")
+                let inline = document.createElementNS("http://www.w3.org/2000/svg", "path")
+                outline.setAttribute("d", `M 0 8, 
+                                            L  -4 -8,
+                                            L -2 -4,
+                                            L 0 -8,
+                                            L 2 -6, 
+                                            L 4 -8,
+                                            z`)
+                outline.setAttribute("stroke","black")
+                outline.setAttribute("stroke-width","1px")
+                outline.setAttribute("stroke-width","1px")
+                outline.setAttribute('vector-effect', 'non-scaling-stroke')
+                
+                inline.setAttribute("d", `M -1 6,
+                                            L 1 6,
+                                            L -2 2,
+                                            L 1.5 2,
+                                            z`)
+                inline.setAttribute("fill", "black")
+                gElement.appendChild(outline)
+                gElement.appendChild(inline)
+                return(gElement)
         }
         return(document.createElementNS("http://www.w3.org/2000/svg","g"))
     }

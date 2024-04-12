@@ -1,10 +1,13 @@
+/*Um neben dem HTMLSelect-Element ein Vorschaufenster mit dem Raketentyp zu zeigen importiere ich die Klasse SpaceCraft und exportiere 
+const typeSelector = document.getElementById(`typeSelector`)! as HTMLSelectElement, um den Typeselector global zu nutzen. 
+Zum Beispiel um in SpaceCraft die Typbezogenen SVG-Elemente zu erzeugen. 
+*/
+import { Spacecraft } from "./Spacecraft";
 
-const idInputElement = document.getElementById('rocketId')! as HTMLInputElement;
-const colorSelector = document.getElementById(`colorSelector`)! as HTMLSelectElement;
-const typeSelector = document.getElementById(`typeSelector`)! as HTMLSelectElement;
+export const typeSelector = document.getElementById(`typeSelector`)! as HTMLSelectElement;
+export const colorSelector = document.getElementById(`colorSelector`)! as HTMLSelectElement;
+export const idInputElement = document.getElementById('rocketId')! as HTMLInputElement;
     
-
-
     // Funktion zum Entfernen eines JavaScript-Scripts
     function removeScript(scriptName: string) {
         const scripts = document.getElementsByTagName('script');
@@ -20,8 +23,15 @@ const typeSelector = document.getElementById(`typeSelector`)! as HTMLSelectEleme
     const rocketPreviewElement = document.createElementNS("http://www.w3.org/2000/svg", "svg") as SVGSVGElement
     rocketPreviewElement.setAttribute("style", "border: 2px solid brown")
     rocketPreviewElement.setAttribute("viewBox","-50,-50,100,100")
+    
     document.getElementById("startPage")!.appendChild(rocketPreviewElement)
+    //rocketPreviewElement.appendChild(Spacecraft.getCraftGElement(typeSelector.value))
     rocketPreviewElement.appendChild(Spacecraft.getCraftGElement(typeSelector.value))
+
+    
+    typeSelector.addEventListener(`change`, () =>{
+        rocketPreviewElement.appendChild(Spacecraft.getCraftGElement(typeSelector.value))
+    })
 
     // Event Listener für den Start-Button hinzufügen
     // Nach Start Alle 100 Millisekunden eine Anfrage an den Server stellen
@@ -42,7 +52,7 @@ const typeSelector = document.getElementById(`typeSelector`)! as HTMLSelectEleme
     removeScript('startGame.js');
 
     // Einbinden der neuen JavaScript-Dateien
-    const scriptUrls = ['Vector.js', 
+    const scriptUrls = ['   ', 
                         'KeyboardController.js', 
                         `SpaceObject.js`, 
                         `RainbowRocket.js`, 

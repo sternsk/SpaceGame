@@ -1,4 +1,6 @@
-class GameEnvironment{
+import { SpaceGame } from "./SpaceGame";
+
+export class GameEnvironment{
     private _keyboardController: KeyboardController;
     private _frameRateManager = new FrameRateManager();
     
