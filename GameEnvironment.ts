@@ -1,4 +1,5 @@
 import { SpaceGame } from "./SpaceGame";
+import { SpaceObject } from "./SpaceObject";
 
 export class GameEnvironment{
     private _keyboardController: KeyboardController;

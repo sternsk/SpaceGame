@@ -1,3 +1,5 @@
+import { SpaceObject } from "./SpaceObject";
+
 class Device extends SpaceObject{
     private attachmentPoint: {x: number, y: number};
     

@@ -1,6 +1,7 @@
-import {idInputElement} from "./startGame";
-import {colorSelector} from "./startGame";
-import {typeSelector} from "./startGame";
+import {idInputElement} from "./startGame.js";
+import {colorSelector} from "./startGame.js";
+import {typeSelector} from "./startGame.js";
+import { SpaceObject } from "./SpaceObject.js";
 
 export class Spacecraft extends SpaceObject{
     private id: string = idInputElement.value
@@ -66,7 +67,7 @@ export class Spacecraft extends SpaceObject{
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(data),
-            mode: 'no-cors' // Setzen Sie den Modus auf 'no-cors'
+           
         };
 
         try {

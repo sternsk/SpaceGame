@@ -1,6 +1,8 @@
-import { RainbowRocket } from "./RainbowRocket";
-import { idInputElement} from "./startGame";
-import { GameEnvironment } from "./GameEnvironment";
+import { RainbowRocket } from "./RainbowRocket.js";
+import { idInputElement} from "./startGame.js";
+import { GameEnvironment } from "./GameEnvironment.js";
+import { Vector } from "./Vector.js";
+import { SpaceObject } from "./SpaceObject.js";
 
 export class SpaceGame {
     rocketId = idInputElement.value;

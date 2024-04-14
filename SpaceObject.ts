@@ -1,4 +1,6 @@
-class SpaceObject {
+import { Vector } from "./Vector.js";
+
+export class SpaceObject {
     protected _position: Vector = Vector.fromPoint({x:0,y:0});
     protected _velocity: Vector = Vector.fromPoint({x:0,y:0});
     protected _direction: Vector = new Vector(1, 0); // degrees

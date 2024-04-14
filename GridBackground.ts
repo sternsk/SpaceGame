@@ -1,3 +1,5 @@
+import { SpaceObject } from "./SpaceObject";
+
 class GridBackground{
 
     width: number; 

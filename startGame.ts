@@ -2,7 +2,7 @@
 const typeSelector = document.getElementById(`typeSelector`)! as HTMLSelectElement, um den Typeselector global zu nutzen. 
 Zum Beispiel um in SpaceCraft die Typbezogenen SVG-Elemente zu erzeugen. 
 */
-import { Spacecraft } from "./Spacecraft";
+import { Spacecraft } from "./Spacecraft.js";
 
 export const typeSelector = document.getElementById(`typeSelector`)! as HTMLSelectElement;
 export const colorSelector = document.getElementById(`colorSelector`)! as HTMLSelectElement;
@@ -27,20 +27,30 @@ export const idInputElement = document.getElementById('rocketId')! as HTMLInputE
     document.getElementById("startPage")!.appendChild(rocketPreviewElement)
     //rocketPreviewElement.appendChild(Spacecraft.getCraftGElement(typeSelector.value))
     rocketPreviewElement.appendChild(Spacecraft.getCraftGElement(typeSelector.value))
-
+    console.log(typeSelector.value)
     
     typeSelector.addEventListener(`change`, () =>{
+        
         rocketPreviewElement.appendChild(Spacecraft.getCraftGElement(typeSelector.value))
     })
 
     // Event Listener für den Start-Button hinzufügen
     // Nach Start Alle 100 Millisekunden eine Anfrage an den Server stellen
-    document.getElementById('startButton')!.addEventListener('click', () =>{
+    document.getElementById("button")?.addEventListener("click", startSpaceGame);
     // Starten Sie das Spiel
     // sendRocketStatus();
+    
 
-    // Verbergen Sie die Startseite
-    document.getElementById('startPage')!.style.display = 'none';
+
+    async function startSpaceGame()  {
+        let lib = await import("./library.js");
+        // Zeigen Sie die Spielseite an
+        document.getElementById('gamePage')!.style.display = 'block';
+        console.log("gamepage shown")
+        // Verbergen Sie die Startseite
+        document.getElementById('startPage')!.style.display = 'none';
+    }
+    
 
     // Einbinden der neuen CSS-Datei
     /*const newCssLink = document.createElement('link');
@@ -49,11 +59,11 @@ export const idInputElement = document.getElementById('rocketId')! as HTMLInputE
     document.head.appendChild(newCssLink);
         */
     // Entfernen Sie das "startGame.js" Script
-    removeScript('startGame.js');
+    //removeScript('startGame.js');
 
-    // Einbinden der neuen JavaScript-Dateien
+    /* Einbinden der neuen JavaScript-Dateien
     const scriptUrls = ['   ', 
-                        'KeyboardController.js', 
+                        's', 
                         `SpaceObject.js`, 
                         `RainbowRocket.js`, 
                         `GameEnvironment.js`, 
@@ -64,10 +74,9 @@ export const idInputElement = document.getElementById('rocketId')! as HTMLInputE
         script.src = url;
         document.body.appendChild(script);
     });
-
-    // Zeigen Sie die Spielseite an
-    document.getElementById('gamePage')!.style.display = 'block';
+*/
+    
 
     // Alle 100 Millisekunden eine Anfrage an den Server stellen
     //setInterval(sendRocketStatus, 100)
-});
+

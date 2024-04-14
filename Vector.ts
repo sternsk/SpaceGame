@@ -1,4 +1,4 @@
-class Vector {
+export class Vector {
     private _length: number = 0;
     private _angle: number = 0;
   

@@ -1,4 +1,5 @@
 import { Spacecraft } from "./Spacecraft";
+import { Vector } from "./Vector";
 
 export class RainbowRocket extends Spacecraft {
     
